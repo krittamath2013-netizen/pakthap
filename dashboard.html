@@ -282,7 +282,8 @@
       <li><a id="menuVar"><svg class="ic"><use href="#i-chart"/></svg>ประมวลผลตามตัวแปร</a></li>
       <li class="grp">บันทึกข้อมูล (เจ้าหน้าที่)</li>
       <li><a id="menuRecord"><svg class="ic"><use href="#i-plus"/></svg>บันทึกแบบสำรวจ</a></li>
-      <li><a href="./" target="_blank"><svg class="ic"><use href="#i-phone"/></svg>ฟอร์มสำหรับประชาชน</a></li>
+      <li><a href="./" target="_blank"><svg class="ic"><use href="#i-home"/></svg>หน้าแรกสาธารณะ</a></li>
+      <li><a href="form.html" target="_blank"><svg class="ic"><use href="#i-phone"/></svg>ฟอร์มสำหรับประชาชน</a></li>
       <li><a href="qr.html" target="_blank"><svg class="ic"><use href="#i-target"/></svg>QR Code รายพื้นที่</a></li>
       <li><a id="menuLogout"><svg class="ic"><use href="#i-refresh"/></svg>ออกจากระบบ</a></li>
     </ul>
@@ -1335,20 +1336,22 @@ const dayDiff = (a,b) => Math.round((Date.parse(b)-Date.parse(a))/864e5);
 const addDay = (s,n) => { const d=new Date(Date.parse(s)+n*864e5); return d.toISOString().slice(0,10); };
 
 /* ---------- load / poll ---------- */
+const IS_PUBLIC = (typeof PUBLIC!=='undefined' && PUBLIC); // หน้าแรกสาธารณะ: อ่านอย่างเดียว ไม่มีชื่อบุคคล
 function load(){
-  google.script.run.withSuccessHandler(txt=>{
+  const R = google.script.run.withSuccessHandler(txt=>{
     RAW = typeof txt==='string' ? JSON.parse(txt) : txt;
     $('dot').classList.remove('off');
     applyRole(); initFilters(); render(); if(window.Report) Report.setData(RAW);
     const n = RAW.resp.length;
     if(prevTotal!==null && n>prevTotal){ toast(`มีแบบสำรวจใหม่ +${n-prevTotal} ชุด`); flash('kTotal'); flash('kToday'); }
-    prevTotal = n;
+    prevTotal = n; if(IS_PUBLIC && $('heroN')) $('heroN').textContent=fmt(n);
     $('liveTxt').textContent = `อัปเดต ${RAW.serverTime.slice(11,19)} น. · ทุก ${RAW.settings.refreshSec} วิ`;
     schedule();
   }).withFailureHandler(e=>{
     if(/รหัสผ่าน/.test(e.message||'')){ STAFF_KEY.clear(); location.replace('login.html?next=dashboard.html'); return; }
     $('dot').classList.add('off'); $('liveTxt').textContent='เชื่อมต่อไม่สำเร็จ จะลองใหม่'; schedule();
-  }).getDashboardData(KEY);
+  });
+  IS_PUBLIC ? R.getPublicData() : R.getDashboardData(KEY);
 }
 function schedule(){ clearTimeout(timer); timer=setTimeout(()=>{ if(!document.hidden) load(); else schedule(); }, (RAW?RAW.settings.refreshSec:30)*1000); }
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden && RAW) load(); });
@@ -1359,6 +1362,14 @@ function flash(id){const e=$(id);e.classList.add('flash');setTimeout(()=>e.class
 let roleApplied=false;
 function applyRole(){
   if(roleApplied) return; roleApplied=true;
+  if(IS_PUBLIC){
+    document.body.classList.add('public');
+    [['kLate','ความรอบรู้เฉลี่ย','c4','#i-brain'],['kNone','ความรอบรู้ระดับดี','c6','#i-check'],['kDone','รู้จักสื่อรณรงค์','c3','#i-mega']].forEach(([id,t,c,ic])=>{
+      const k=$(id); k.className='kpi '+c; k.querySelector('.l').textContent=t; k.querySelector('.ico use').setAttribute('href',ic);});
+    const t1=document.querySelector('.titlebar h1 .t1'); if(t1) t1.innerHTML='สถิติภาพรวม <em>A13</em>';
+    const hn=$('heroN'); if(hn) hn.textContent=fmt(RAW.resp.length);
+    return;
+  }
   const sm=document.querySelector('.brand small');
   if(RAW.role==='area'){
     const a=RAW.areas[0]||[];
@@ -1436,12 +1447,19 @@ function renderKPI(){
   const rep=sel.filter(a=>a.count>0).length, N=sel.length||1;
   setKPI('kReport',`${rep}<small> / ${sel.length} พื้นที่</small>`,`${(rep/N*100).toFixed(1)}% ของพื้นที่`);
   const late=sel.filter(a=>a.st==='late').length, none=sel.filter(a=>a.st==='none').length, done=sel.filter(a=>a.st==='done').length;
+  if(IS_PUBLIC){ // สาธารณะ: แสดงผลการสำรวจแทนสถานะรายพื้นที่
+    const m=n?resp.reduce((x,r)=>x+r.pct,0)/n:0, good=resp.filter(r=>r.lv===0).length, aw=resp.filter(r=>r.aw===1).length;
+    setKPI('kLate',n?`${m.toFixed(1)}<small> %</small>`:'–','ของคะแนนเต็ม');
+    setKPI('kNone',n?`${(good/n*100).toFixed(1)}<small> %</small>`:'–',`${fmt(good)} คน`);
+    setKPI('kDone',n?`${(aw/n*100).toFixed(1)}<small> %</small>`:'–',`${fmt(aw)} คน`);
+  } else {
   setKPI('kLate',`${late}<small> พื้นที่</small>`,hasPlan?`${(late/N*100).toFixed(1)}% ของพื้นที่`:'ยังไม่ตั้งวันสิ้นสุด');
   setKPI('kNone',`${none}<small> พื้นที่</small>`,`${(none/N*100).toFixed(1)}% ของพื้นที่`);
   setKPI('kDone',`${done}<small> พื้นที่</small>`,`${(done/N*100).toFixed(1)}% ของพื้นที่`);
-  const def=sel.filter(a=>a.defTarget).length, w=$('warnTarget'); const msg=[];
+  }
+  const def=IS_PUBLIC?0:sel.filter(a=>a.defTarget).length, w=$('warnTarget'); const msg=[];
   if(def) msg.push(`ⓘ ${def} พื้นที่ยังไม่ได้กำหนดเป้าหมายในชีต “พื้นที่” — ใช้ค่าเริ่มต้น ${s.defaultTarget} ชุดไปก่อน`);
-  if(!hasPlan) msg.push('ⓘ ยังไม่ได้ตั้งวันเริ่ม–สิ้นสุดในชีต “ตั้งค่า” จึงยังคำนวณ “ล่าช้า” ไม่ได้');
+  if(!hasPlan&&!IS_PUBLIC) msg.push('ⓘ ยังไม่ได้ตั้งวันเริ่ม–สิ้นสุดในชีต “ตั้งค่า” จึงยังคำนวณ “ล่าช้า” ไม่ได้');
   w.innerHTML=msg.join('<br>'); w.classList.toggle('on',msg.length>0);
 }
 
@@ -1657,12 +1675,14 @@ $('btnPrint').onclick=()=>window.print();
 if(window.innerWidth<620) $('btnFilter').click(); // มือถือ: ซ่อนตัวกรองไว้ก่อน
 $('btnRefresh').onclick=()=>load();
 
-/* ---------- บันทึกข้อมูลจากหน้า dashboard ---------- */
+/* ---------- บันทึกข้อมูลจากหน้า dashboard (เฉพาะเจ้าหน้าที่) ---------- */
+if(!IS_PUBLIC){
 FormPanel.init({mode:'drawer', key:KEY, onSaved:()=>load()}); // บันทึกเสร็จ → รีเฟรชทันที
 $('btnRecord').onclick=()=>FormPanel.open();
 $('menuRecord').onclick=()=>{closeSide();FormPanel.open();};
 $('fabRecord').onclick=()=>FormPanel.open();
 $('tbody').addEventListener('click',e=>{const b=e.target.closest('.rowrec'); if(b) FormPanel.open(b.dataset.area);});
+}
 
 $('menuLogout').onclick=()=>{ STAFF_KEY.clear(); location.href='login.html'; };
 load();

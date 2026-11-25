@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แบบสอบถามความรอบรู้ด้านสุขภาพ เรื่องเหล้า — พักตับ ยืดชีวิต</title>
+<meta property="og:title" content="ร่วมตอบแบบสอบถาม “พักตับ ยืดชีวิต”">
+<meta property="og:description" content="แบบสอบถามความรอบรู้ด้านสุขภาพ เรื่องเหล้า ใช้เวลา 5–7 นาที ไม่เก็บชื่อ–นามสกุล">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f6f7f9}.links{text-align:center;font:14px 'Sarabun',sans-serif;padding:8px 0 20px}.links{color:#94a3b8}.links .staff{display:inline-block;margin-top:8px;color:#1f3c88;text-decoration:none;border:1px solid #c9d6f2;border-radius:999px;padding:4px 12px;font-size:13px;background:#fff}</style>
+</head>
+<body>
+<script src="js/config.js"></script>
+<script src="js/gas-shim.js"></script>
+<script src="js/questions.js"></script>
+<!-- ส่วนฟอร์มแบบสำรวจ A13 — ใช้ร่วมกันทั้งหน้า Dashboard (แผงเลื่อน) และหน้าฟอร์มเดี่ยว -->
+<style>
+  .fp{
+    --fbg:#f6f7f9; --fcard:#fff; --fink:#191919; --fink2:#666; --fline:#e3e5e8;
+    --facc:#1f3c88; --facc-soft:#e8eefc; --fbad:#dc3c3d;
+    font-family:'IBM Plex Sans Thai','Sarabun',system-ui,sans-serif;color:var(--fink);font-size:16px;line-height:1.55;background:var(--fbg);color-scheme:light;
+  }
+  .fp *{box-sizing:border-box}
+  /* โหมดแผงเลื่อน */
+  .fp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:none}
+  .fp-overlay.on{display:block}
+  .fp.drawer{position:fixed;top:0;right:0;bottom:0;width:min(760px,100%);z-index:51;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column;box-shadow:-8px 0 24px rgba(0,0,0,.18)}
+  .fp.drawer.on{transform:none}
+  .fp.page{min-height:100vh;display:flex;flex-direction:column}
+  .fp .fp-head{background:#1f3c88;border-bottom:4px solid #ffc727;color:#fff;padding:14px 16px 12px;display:flex;gap:12px;align-items:flex-start}
+  .fp .fp-head h1{margin:0;font-size:18px;font-weight:700;flex:1}
+  .fp .fp-head p{margin:2px 0 0;font-size:13.5px;opacity:.9;font-weight:400}
+  .fp .fp-x{background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:8px;width:36px;height:36px;font-size:20px;cursor:pointer;flex:none}
+  .fp.page .fp-x{display:none}
+  .fp .fp-scroll{flex:1;overflow:auto}
+  .fp .bar{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--fline);padding:8px 16px;display:flex;align-items:center;gap:10px;font-size:14px;color:var(--fink2)}
+  .fp .bar .track{flex:1;height:6px;background:#eceef1;border-radius:3px;overflow:hidden}
+  .fp .bar .fill{height:100%;width:0;background:var(--facc);transition:width .2s}
+  .fp main{max-width:760px;margin:0 auto;padding:8px 12px 24px}
+  .fp .card{background:var(--fcard);border:1px solid var(--fline);border-radius:16px;box-shadow:0 1px 2px rgba(15,23,42,.04),0 6px 20px rgba(15,23,42,.04);padding:16px;margin:12px 0}
+  .fp .card h2{font-size:17px;margin:0 0 4px;font-weight:600}
+  .fp .card .sub{color:var(--fink2);font-size:14px;margin:0 0 12px}
+  .fp label.f{display:block;font-weight:600;margin:12px 0 4px;font-size:15px}
+  .fp select,.fp input[type=text]{width:100%;font:inherit;color:var(--fink);padding:10px 12px;border:1px solid #cfd3d8;border-radius:8px;background:#fff}
+  .fp .row{display:flex;gap:8px}.fp .row>*{flex:1;min-width:0}
+  .fp .q{padding:12px 0;border-top:1px solid var(--fline)}
+  .fp .q .t{margin-bottom:8px}
+  .fp .q .no{display:inline-block;min-width:26px;margin-right:4px;color:var(--facc);font-weight:700}
+  .fp .q.err .t{color:var(--fbad)}
+  .fp .q.err{background:#fff5f5;margin:0 -16px;padding:12px 16px}
+  .fp .opts{display:flex;flex-wrap:wrap;gap:6px}
+  .fp .opts label{flex:1 1 0;min-width:64px;position:relative}
+  .fp .opts input{position:absolute;opacity:0;pointer-events:none}
+  .fp .opts span{display:block;text-align:center;padding:9px 4px;border:1px solid #dfe5ee;border-radius:10px;font-size:14px;cursor:pointer;user-select:none;background:#fff}
+  .fp .opts input:checked+span{background:var(--facc);border-color:var(--facc);color:#fff;font-weight:600}
+  .fp .opts input:focus-visible+span{outline:2px solid var(--facc);outline-offset:2px}
+  .fp .opts.v{flex-direction:column}.fp .opts.v span{text-align:left;padding:10px 12px}
+  .fp .checks{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .fp .checks label{display:flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid #e0e3e7;border-radius:8px;font-size:14px;background:#fff}
+  .fp .checks input{width:18px;height:18px;accent-color:var(--facc)}
+  .fp .cond{display:none;margin-top:10px;padding:12px;background:#f8fafc;border-radius:8px;border:1px dashed #cfd6df}
+  .fp .cond.on{display:block}
+  .fp .other{display:none;margin-top:6px}.fp .other.on{display:block}
+  .fp .consent{border-left:5px solid #ffc727}
+  .fp .consent p{margin:0 0 8px;font-size:14.5px}
+  .fp .consent ul{margin:0 0 10px;padding-left:20px;font-size:14px;color:var(--fink2)}
+  .fp .consent label.ck{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid #dfe5ee;border-radius:10px;background:#fbfcff;cursor:pointer;font-weight:600}
+  .fp .consent label.ck input{width:20px;height:20px;margin-top:2px;accent-color:var(--facc)}
+  .fp .consent.err label.ck{border-color:var(--fbad);background:#fff5f5}
+  .fp .locked{display:none;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:var(--facc-soft);font-size:15px}
+  .fp .locked.on{display:flex}
+  .fp .locked b{color:var(--facc)}
+  .fp.pub .staff-only{display:none!important}
+  .fp:not(.pub) .pub-only{display:none!important}
+  .fp .areainfo{margin-top:10px;padding:10px 12px;background:var(--facc-soft);border-radius:8px;font-size:14px;display:none}
+  .fp .areainfo.on{display:block}
+  .fp .submit{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--fline);padding:12px 16px;display:flex;justify-content:center;gap:8px}
+  .fp button.btn-p{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 22px;cursor:pointer;background:#f08a00;color:#fff;width:100%;max-width:728px}
+  .fp button.btn-p:disabled{opacity:.6}
+  .fp button.btn-g{font:inherit;font-weight:600;border:1px solid var(--facc);border-radius:10px;padding:12px 18px;cursor:pointer;background:#fff;color:var(--facc)}
+  .fp .msg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:60;align-items:center;justify-content:center;padding:16px}
+  .fp .msg.on{display:flex}
+  .fp .msg .box{background:#fff;border-radius:14px;padding:22px;max-width:420px;width:100%;text-align:center}
+  .fp .msg .big{font-size:34px;font-weight:700;color:var(--facc)}
+  .fp .msg .lv{display:inline-block;padding:2px 12px;border-radius:20px;font-weight:600;margin-top:4px}
+  .fp .msg .acts{display:flex;gap:8px;margin-top:16px}.fp .msg .acts button{flex:1}
+  .fp .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:#191919;color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;display:none;max-width:90%;z-index:70}
+  .fp .toast.on{display:block}
+  @media (max-width:420px){.fp .opts span{font-size:13px}.fp .checks{grid-template-columns:1fr}}
+</style>
+
+<div class="fp-overlay" id="fpOverlay"></div>
+<div class="fp" id="fp">
+  <div class="fp-head">
+    <h1><span class="staff-only">บันทึกแบบสำรวจ A13</span><span class="pub-only">แบบสอบถามความรอบรู้ด้านสุขภาพ เรื่องเหล้า</span><p>โครงการ “พักตับ ยืดชีวิต” · สำหรับผู้ตอบระดับ ปวช. ขึ้นไป · ใช้เวลาประมาณ 5–7 นาที</p></h1>
+    <button class="fp-x" id="fpClose" aria-label="ปิด">✕</button>
+  </div>
+  <div class="fp-scroll" id="fpScroll">
+    <div class="bar"><span id="fpProgTxt">0/0</span><div class="track"><div class="fill" id="fpProgFill"></div></div></div>
+    <main>
+      <section class="card consent" id="fpSecConsent">
+        <h2>คำชี้แจงและความยินยอม</h2>
+        <p>แบบสอบถามนี้จัดทำเพื่อสำรวจความรอบรู้ด้านสุขภาพเกี่ยวกับเครื่องดื่มแอลกอฮอล์ ภายใต้โครงการ “พักตับ ยืดชีวิต”</p>
+        <ul>
+          <li>การตอบแบบสอบถามเป็นไปโดยสมัครใจ ท่านหยุดตอบได้ทุกเมื่อ</li>
+          <li>ไม่มีการเก็บชื่อ–นามสกุล หรือเลขบัตรประชาชน</li>
+          <li>ข้อมูลจะนำเสนอในภาพรวมเท่านั้น และใช้เพื่อพัฒนางานสาธารณสุขในชุมชน</li>
+        </ul>
+        <label class="ck"><input type="checkbox" id="fpConsent"> ข้าพเจ้าเข้าใจคำชี้แจง และยินยอมตอบแบบสอบถามนี้</label>
+      </section>
+
+      <section class="card" id="fpSecArea">
+        <h2><span class="staff-only">พื้นที่ดำเนินงาน</span><span class="pub-only">พื้นที่ที่ท่านอาศัยอยู่</span></h2>
+        <div class="locked" id="fpLocked"></div>
+        <div id="fpPick">
+          <p class="sub staff-only">เลือกครั้งเดียว ระบบจะจำพื้นที่ไว้สำหรับชุดถัดไป</p>
+          <label class="f" for="fpProv">จังหวัด</label>
+          <select id="fpProv"><option value="">— เลือกจังหวัด —</option></select>
+          <label class="f" for="fpArea"><span class="staff-only">พื้นที่ / ผู้รับผิดชอบ</span><span class="pub-only">ตำบล / อำเภอ</span></label>
+          <select id="fpArea" disabled><option value="">— เลือกพื้นที่ —</option></select>
+        </div>
+        <div class="areainfo staff-only" id="fpAreaInfo"></div>
+        <div class="staff-only">
+          <label class="f" for="fpCode">รหัสแบบสำรวจ <span style="font-weight:400;color:var(--fink2)">(เว้นว่างได้ ระบบจะออกรหัสให้)</span></label>
+          <input type="text" id="fpCode" placeholder="เช่น N22-0001">
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>ตอนที่ 1.1 ความรอบรู้ประเด็นความเสี่ยงเกี่ยวกับเหล้า (3 ระดับ)</h2>
+        <p class="sub">“ฉันเข้าใจว่า …”</p>
+        <div id="fpP11"></div>
+      </section>
+
+      <section class="card">
+        <h2>ตอนที่ 1.2 ความรอบรู้ประเด็นความเสี่ยงเกี่ยวกับเหล้า (5 ระดับ)</h2>
+        <p class="sub">“ฉันสามารถ … / ฉันจะ …”</p>
+        <div id="fpP12"></div>
+      </section>
+
+      <section class="card">
+        <h2>ตอนที่ 2 ความคิดเห็นเกี่ยวกับสื่อหรือกิจกรรมเกี่ยวกับเหล้า</h2>
+        <div class="q" data-req="aware">
+          <div class="t"><span class="no">22.</span>ฉันทราบหรือรู้จักสื่อหรือกิจกรรมการรณรงค์ที่เกี่ยวข้องกับเหล้าหรือเครื่องดื่มแอลกอฮอล์</div>
+          <div class="opts"><label><input type="radio" name="aware" value="1"><span>ทราบ</span></label><label><input type="radio" name="aware" value="2"><span>ไม่ทราบ</span></label></div>
+          <div class="cond" id="fpCondAware">
+            <label class="f" for="fpAwareEx">ยกตัวอย่างสื่อหรือกิจกรรม</label>
+            <input type="text" id="fpAwareEx">
+            <label class="f">ทราบจากสื่อใด (ตอบได้มากกว่า 1 ข้อ)</label>
+            <div class="checks" id="fpAwareSrc"></div>
+            <input type="text" class="other" id="fpAwareOther" placeholder="โปรดระบุสื่ออื่น ๆ">
+          </div>
+        </div>
+        <div class="q" data-req="joined">
+          <div class="t"><span class="no">23.</span>ฉันเคยเข้าร่วมกิจกรรมการรณรงค์ที่เกี่ยวข้องกับเหล้าหรือเครื่องดื่มแอลกอฮอล์</div>
+          <div class="opts"><label><input type="radio" name="joined" value="1"><span>เคย</span></label><label><input type="radio" name="joined" value="2"><span>ไม่เคย</span></label></div>
+          <div class="cond" id="fpCondJoined">
+            <label class="f" for="fpJoinedEx">ยกตัวอย่างสื่อหรือกิจกรรม</label>
+            <input type="text" id="fpJoinedEx">
+            <label class="f">ทราบจากสื่อใด (ตอบได้มากกว่า 1 ข้อ)</label>
+            <div class="checks" id="fpJoinedSrc"></div>
+            <input type="text" class="other" id="fpJoinedOther" placeholder="โปรดระบุสื่ออื่น ๆ">
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>ตอนที่ 3 ข้อมูลพื้นฐาน</h2>
+        <div class="row">
+          <div><label class="f" for="fpProvince">24. จังหวัด</label><input type="text" id="fpProvince"></div>
+          <div><label class="f" for="fpAmphoe">25. อำเภอ</label><input type="text" id="fpAmphoe"></div>
+        </div>
+        <label class="f" for="fpTambon">26. ตำบล</label><input type="text" id="fpTambon">
+        <div class="q" data-req="municipality"><div class="t"><span class="no">27.</span>เขตการปกครอง</div><div class="opts" id="fpO_municipality"></div></div>
+        <div class="q" data-req="sex"><div class="t"><span class="no">28.</span>เพศ</div><div class="opts v" id="fpO_sex"></div>
+          <input type="text" class="other" id="fpSexOther" placeholder="โปรดระบุ"></div>
+        <div class="q" data-req="birth"><div class="t"><span class="no">29.</span>วัน เดือน ปีเกิด (ตามบัตรประชาชน, ปี พ.ศ.)</div>
+          <div class="row"><select id="fpBirthD"></select><select id="fpBirthM"></select><select id="fpBirthY"></select></div></div>
+        <div class="q" data-req="religion"><div class="t"><span class="no">30.</span>ศาสนา</div><div class="opts v" id="fpO_religion"></div>
+          <input type="text" class="other" id="fpReligionOther" placeholder="โปรดระบุ"></div>
+        <div class="q" data-req="edu"><div class="t"><span class="no">31.</span>ระดับการศึกษา “ล่าสุด” (กำลังศึกษาให้ระบุระดับที่กำลังศึกษา / จบแล้วให้ระบุวุฒิสูงสุด)</div>
+          <select id="fpO_edu"><option value="">— เลือก —</option></select>
+          <input type="text" class="other" id="fpEduOther" placeholder="โปรดระบุ"></div>
+        <label class="f" for="fpVillage">32. ชื่อหมู่บ้าน / องค์กร / หน่วยงาน / สถานศึกษาที่ผู้ตอบสังกัด</label>
+        <input type="text" id="fpVillage">
+        <div class="q" data-req="orgType"><div class="t"><span class="no">33.</span>ประเภทหน่วยงานที่ผู้ตอบสังกัด</div>
+          <select id="fpO_orgType"><option value="">— เลือก —</option></select></div>
+      </section>
+    </main>
+    <div class="submit"><button class="btn-p" id="fpSubmit">ส่งแบบสำรวจ</button></div>
+  </div>
+
+  <div class="msg" id="fpOk"><div class="box">
+    <div class="pub-only" style="font-size:40px;line-height:1">🎉</div>
+    <div class="pub-only" style="font-size:20px;font-weight:700;color:var(--facc);margin:6px 0 2px">ขอบคุณที่ตอบแบบสอบถาม</div>
+    <div style="font-size:14px;color:var(--fink2)"><span class="staff-only">บันทึกแล้ว · </span>รหัส <b id="fpOkCode"></b></div>
+    <div class="pub-only" style="font-size:14px;color:var(--fink2);margin-top:10px">คะแนนความรอบรู้ของท่าน</div>
+    <div class="big" id="fpOkPct"></div>
+    <div class="lv" id="fpOkLv"></div>
+    <div class="staff-only" style="margin-top:12px;font-size:15px">พื้นที่นี้ส่งแล้ว <b id="fpOkCount"></b></div>
+    <div class="pub-only" style="margin-top:12px;font-size:13.5px;color:var(--fink2)">ร่วม “พักตับ” ลด ละ เลิกเหล้า เพื่อสุขภาพที่ดีของท่านและครอบครัว</div>
+    <div class="acts"><button class="btn-g" id="fpDone">ปิด</button><button class="btn-p" id="fpNext"><span class="staff-only">กรอกชุดถัดไป</span><span class="pub-only">ตอบใหม่ (ผู้ตอบคนถัดไป)</span></button></div>
+  </div></div>
+  <div class="toast" id="fpToast"></div>
+</div>
+
+<script>
+/* FormPanel: ใช้ Q (ประกาศในหน้าหลัก)
+   FormPanel.init({mode:'drawer'|'page', preset:'N22', key:'รหัสเจ้าหน้าที่', onSaved:fn})
+   ไม่มี key = โหมดประชาชน (ไม่แสดงชื่อผู้รับผิดชอบ/ยอดเก็บ, ซ่อนรหัสแบบสำรวจ)
+   FormPanel.open(areaId?)  — เปิดแผง (โหมด drawer) และเลือกพื้นที่ให้ */
+window.FormPanel = (function(){
+  const $ = id => document.getElementById(id);
+  const store = { get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}} };
+  let AREAS = [], cfg = {mode:'page'}, built = false, areasLoaded = false, pendingArea = '';
+
+  const opts = (name, labels, values) => labels.map((l,i)=>`<label><input type="radio" name="${name}" value="${values?values[i]:i+1}"><span>${l}</span></label>`).join('');
+  const radio = name => { const el=document.querySelector(`#fp input[name="${name}"]:checked`); return el?el.value:''; };
+  const checks = id => [...$(id).querySelectorAll('input:checked')].map(c=>Number(c.value));
+
+  function build(){
+    const L3=['ใช่','ไม่แน่ใจ','ไม่ใช่'], V3=[3,2,1];
+    const L5=['ใช่มากที่สุด','ใช่','ไม่แน่ใจ','ไม่ใช่','ไม่ใช่มากที่สุด'], V5=[5,4,3,2,1];
+    $('fpP11').innerHTML = Q.part11.map((q,i)=>`<div class="q" data-req="${q[0]}"><div class="t"><span class="no">${i+1}.</span>${q[1]}</div><div class="opts">${opts(q[0],L3,V3)}</div></div>`).join('');
+    $('fpP12').innerHTML = Q.part12.map((q,i)=>`<div class="q" data-req="${q[0]}"><div class="t"><span class="no">${Q.part11.length+i+1}.</span>${q[1]}</div><div class="opts">${opts(q[0],L5,V5)}</div></div>`).join('');
+    ['fpAwareSrc','fpJoinedSrc'].forEach(id=>{ $(id).innerHTML = Q.media.map((m,i)=>`<label><input type="checkbox" value="${i+1}">${m}</label>`).join(''); });
+    $('fpO_municipality').innerHTML = opts('municipality',Q.municipality);
+    $('fpO_sex').innerHTML = opts('sex',Q.sex);
+    $('fpO_religion').innerHTML = opts('religion',Q.religion);
+    $('fpO_edu').innerHTML += Q.edu.map((e,i)=>`<option value="${i+1}">${i+1}) ${e}</option>`).join('');
+    $('fpO_orgType').innerHTML += Q.orgType.map((e,i)=>`<option value="${i+1}">(${i+1}) ${e}</option>`).join('');
+    const M=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+    $('fpBirthD').innerHTML='<option value="">วัน</option>'+Array.from({length:31},(_,i)=>`<option>${i+1}</option>`).join('');
+    $('fpBirthM').innerHTML='<option value="">เดือน</option>'+M.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('');
+    const yNow=new Date().getFullYear()+543;
+    $('fpBirthY').innerHTML='<option value="">ปี พ.ศ.</option>'+Array.from({length:90},(_,i)=>`<option>${yNow-10-i}</option>`).join('');
+  }
+
+  const reqKeys = () => [...document.querySelectorAll('#fp [data-req]')].map(e=>e.dataset.req);
+  function answered(k){
+    if(k==='edu') return !!$('fpO_edu').value;
+    if(k==='orgType') return !!$('fpO_orgType').value;
+    if(k==='birth') return !!($('fpBirthD').value&&$('fpBirthM').value&&$('fpBirthY').value);
+    return !!radio(k);
+  }
+  function progress(){
+    const ks=reqKeys(), done=ks.filter(answered).length;
+    $('fpProgTxt').textContent=`ตอบแล้ว ${done}/${ks.length}`;
+    $('fpProgFill').style.width=(done/ks.length*100)+'%';
+  }
+
+  function fillProvinces(){
+    const provs=[...new Set(AREAS.map(a=>a.province))].sort((a,b)=>a.localeCompare(b,'th'));
+    $('fpProv').innerHTML='<option value="">— เลือกจังหวัด —</option>'+provs.map(p=>`<option>${p}</option>`).join('');
+  }
+  function fillAreas(prov){
+    const list=AREAS.filter(a=>a.province===prov);
+    $('fpArea').disabled=!prov;
+    $('fpArea').innerHTML='<option value="">— เลือกพื้นที่ —</option>'+list.map(a=>`<option value="${a.id}">${a.tambon?('ตำบล'+a.tambon+' '):''}อำเภอ${a.amphoe}${a.name?' · '+a.name:''}</option>`).join('');
+  }
+  function selectArea(id){
+    const a=AREAS.find(x=>x.id===id), box=$('fpAreaInfo');
+    if(!a){box.classList.remove('on');return}
+    $('fpProv').value=a.province; fillAreas(a.province); $('fpArea').value=a.id;
+    store.set('pakthap_area',id);
+    if(a.name){ box.innerHTML=`<b>${a.id}</b> · พื้นที่${a.group} · ${a.org}<br>ส่งแล้ว <b>${a.count}</b> / เป้าหมาย ${a.target} ชุด`; box.classList.add('on'); }
+    $('fpProvince').value=a.province; $('fpAmphoe').value=a.amphoe; $('fpTambon').value=a.tambon;
+  }
+
+  function toast(t){const e=$('fpToast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),3500)}
+  function scrollTo(el){ try{ el.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){} }
+
+  function collect(){
+    const items={}; Q.part11.concat(Q.part12).forEach(q=>items[q[0]]=radio(q[0]));
+    return {
+      consent:$('fpConsent').checked, key:cfg.key||'', areaId:$('fpArea').value, surveyCode:$('fpCode').value.trim(), items,
+      aware:radio('aware'), awareExample:$('fpAwareEx').value, awareSrc:checks('fpAwareSrc'), awareOther:$('fpAwareOther').value,
+      joined:radio('joined'), joinedExample:$('fpJoinedEx').value, joinedSrc:checks('fpJoinedSrc'), joinedOther:$('fpJoinedOther').value,
+      province:$('fpProvince').value.trim(), amphoe:$('fpAmphoe').value.trim(), tambon:$('fpTambon').value.trim(),
+      municipality:radio('municipality'), sex:radio('sex'), sexOther:$('fpSexOther').value,
+      birthD:$('fpBirthD').value, birthM:$('fpBirthM').value, birthY:$('fpBirthY').value,
+      religion:radio('religion'), religionOther:$('fpReligionOther').value,
+      edu:$('fpO_edu').value, eduOther:$('fpEduOther').value, village:$('fpVillage').value.trim(), orgType:$('fpO_orgType').value
+    };
+  }
+  function validate(){
+    document.querySelectorAll('#fp .q.err').forEach(e=>e.classList.remove('err'));
+    $('fpSecConsent').classList.remove('err');
+    if(!$('fpConsent').checked){$('fpSecConsent').classList.add('err');scrollTo($('fpSecConsent'));toast('กรุณายืนยันความยินยอมก่อนตอบแบบสอบถาม');return false}
+    if(!$('fpArea').value){scrollTo($('fpSecArea'));toast('กรุณาเลือกพื้นที่');return false}
+    const miss=[...document.querySelectorAll('#fp [data-req]')].filter(e=>!answered(e.dataset.req));
+    miss.forEach(e=>e.classList.add('err'));
+    if(miss.length){scrollTo(miss[0]);toast(`ยังไม่ได้ตอบ ${miss.length} ข้อ (ไฮไลต์สีแดง)`);return false}
+    return true;
+  }
+  function reset(){
+    document.querySelectorAll('#fp main input[type=radio],#fp main input[type=checkbox]').forEach(i=>i.checked=false);
+    $('fpSecConsent').classList.remove('err');
+    ['fpCode','fpAwareEx','fpAwareOther','fpJoinedEx','fpJoinedOther','fpSexOther','fpReligionOther','fpEduOther','fpVillage'].forEach(id=>$(id).value='');
+    ['fpBirthD','fpBirthM','fpBirthY','fpO_edu','fpO_orgType'].forEach(id=>$(id).value='');
+    document.querySelectorAll('#fp .cond,#fp .other,#fp .q.err').forEach(e=>e.classList.remove('on','err'));
+    selectArea($('fpArea').value); progress(); $('fpScroll').scrollTop=0; if(cfg.mode==='page') window.scrollTo(0,0);
+  }
+
+  function bind(){
+    $('fp').addEventListener('change',e=>{
+      const t=e.target;
+      if(t.name==='aware') $('fpCondAware').classList.toggle('on',t.value==='1');
+      if(t.name==='joined') $('fpCondJoined').classList.toggle('on',t.value==='1');
+      if(t.name==='sex') $('fpSexOther').classList.toggle('on',t.value==='5');
+      if(t.name==='religion') $('fpReligionOther').classList.toggle('on',t.value==='5');
+      if(t.id==='fpO_edu') $('fpEduOther').classList.toggle('on',t.value==='10');
+      if(t.closest('#fpAwareSrc')) $('fpAwareOther').classList.toggle('on',checks('fpAwareSrc').includes(10));
+      if(t.closest('#fpJoinedSrc')) $('fpJoinedOther').classList.toggle('on',checks('fpJoinedSrc').includes(10));
+      const q=t.closest('.q'); if(q&&answered(q.dataset.req)) q.classList.remove('err');
+      progress();
+    });
+    $('fpProv').onchange=e=>{fillAreas(e.target.value);$('fpAreaInfo').classList.remove('on')};
+    $('fpArea').onchange=e=>selectArea(e.target.value);
+    $('fpClose').onclick=close; $('fpOverlay').onclick=close;
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&cfg.mode==='drawer'&&$('fp').classList.contains('on')) close(); });
+    $('fpSubmit').onclick=()=>{
+      if(!validate())return;
+      const b=$('fpSubmit'); b.disabled=true; b.textContent='กำลังบันทึก…';
+      google.script.run
+        .withSuccessHandler(r=>{
+          b.disabled=false;
+          const a=AREAS.find(x=>x.id===$('fpArea').value); if(a&&r.count!=null) a.count=r.count;
+          $('fpOkCode').textContent=r.code; $('fpOkPct').textContent=r.pct+'%';
+          const lv=$('fpOkLv'); lv.textContent='ความรอบรู้ระดับ'+r.level;
+          lv.style.background=r.level==='ดี'?'#e3f6e6':r.level==='พอใช้'?'#fff4d6':'#fde7e7';
+          if(r.count!=null) $('fpOkCount').textContent=`${r.count} / ${r.target} ชุด`;
+          $('fpDone').style.display=cfg.mode==='drawer'?'':'none';
+          b.textContent=cfg.key?'ส่งแบบสำรวจ':'ส่งแบบสอบถาม';
+          $('fpOk').classList.add('on');
+          if(cfg.onSaved) cfg.onSaved(r);
+        })
+        .withFailureHandler(err=>{b.disabled=false;b.textContent=cfg.key?'ส่งแบบสำรวจ':'ส่งแบบสอบถาม';toast('ส่งไม่สำเร็จ: '+(err.message||err))})
+        .submitResponse(collect());
+    };
+    $('fpNext').onclick=()=>{$('fpOk').classList.remove('on');reset()};
+    $('fpDone').onclick=()=>{$('fpOk').classList.remove('on');reset();close()};
+  }
+
+  function loadAreas(){
+    google.script.run.withSuccessHandler(list=>{
+      AREAS=list; areasLoaded=true; fillProvinces();
+      const lockA=cfg.mode==='page'&&cfg.preset?AREAS.find(x=>x.id===cfg.preset):null;
+      if(lockA){ // ลิงก์/QR ของพื้นที่: ล็อกพื้นที่ ไม่ให้เลือกเอง
+        selectArea(lockA.id); $('fpPick').hidden=true;
+        $('fpLocked').innerHTML=`📍 <span><b>${lockA.tambon?'ตำบล'+lockA.tambon+' ':''}อำเภอ${lockA.amphoe}</b><br>จังหวัด${lockA.province}</span>`;
+        $('fpLocked').classList.add('on'); return;
+      }
+      const id=pendingArea||cfg.preset||store.get('pakthap_area');
+      if(AREAS.find(x=>x.id===id)) selectArea(id);
+    }).withFailureHandler(e=>toast('โหลดรายชื่อพื้นที่ไม่สำเร็จ: '+e.message)).getAreas(cfg.key||'');
+  }
+
+  function init(o){
+    cfg=Object.assign(cfg,o||{});
+    $('fp').classList.add(cfg.mode); $('fp').classList.toggle('pub',!cfg.key);
+    $('fpSubmit').textContent=cfg.key?'ส่งแบบสำรวจ':'ส่งแบบสอบถาม';
+    if(!built){ build(); bind(); progress(); built=true; }
+    if(cfg.mode==='page') loadAreas();
+  }
+  function open(areaId){
+    if(!built) init({mode:'drawer'});
+    pendingArea=areaId||'';
+    if(!areasLoaded) loadAreas(); else if(areaId) selectArea(areaId);
+    $('fpOverlay').classList.add('on'); $('fp').classList.add('on');
+    document.body.style.overflow='hidden';
+  }
+  function close(){
+    if(cfg.mode!=='drawer') return;
+    $('fpOverlay').classList.remove('on'); $('fp').classList.remove('on');
+    document.body.style.overflow='';
+  }
+  return {init, open, close, refreshAreas:()=>{ if(areasLoaded) loadAreas(); }};
+})();
+</script>
+
+<p class="links">โครงการ “พักตับ ยืดชีวิต” · สานพลังเครือข่ายหมออนามัยและระบบสุขภาพปฐมภูมิ<br><a class="staff" href="./">🏠 หน้าแรก / สถิติ</a> <a class="staff" href="login.html">🔒 สำหรับเจ้าหน้าที่</a></p>
+<script>FormPanel.init({mode:'page', preset:(new URLSearchParams(location.search).get('area')||'').replace(/[^A-Za-z0-9]/g,'')});</script>
+</body>
+</html>
