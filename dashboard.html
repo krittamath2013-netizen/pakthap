@@ -935,7 +935,7 @@ window.Report = (function(){
   }
   return {
     init,
-    setData(raw){ const first=!RAW; RAW=raw; if(first){ fillUnits(); } if(builtCount!==null && raw.resp.length!==builtCount) $('rpNew').classList.add('on'); },
+    setData(raw){ const first=!RAW; RAW=raw; if(first){ if(raw.role==='area'){ $('rpLevel').innerHTML='<option value="area">พื้นที่ของฉัน</option>'; } fillUnits(); } if(builtCount!==null && raw.resp.length!==builtCount) $('rpNew').classList.add('on'); },
     show(mode){ init(); setMode(mode||MODE); },
     build
   };
@@ -1339,7 +1339,7 @@ function load(){
   google.script.run.withSuccessHandler(txt=>{
     RAW = typeof txt==='string' ? JSON.parse(txt) : txt;
     $('dot').classList.remove('off');
-    initFilters(); render(); if(window.Report) Report.setData(RAW);
+    applyRole(); initFilters(); render(); if(window.Report) Report.setData(RAW);
     const n = RAW.resp.length;
     if(prevTotal!==null && n>prevTotal){ toast(`มีแบบสำรวจใหม่ +${n-prevTotal} ชุด`); flash('kTotal'); flash('kToday'); }
     prevTotal = n;
@@ -1354,6 +1354,20 @@ function schedule(){ clearTimeout(timer); timer=setTimeout(()=>{ if(!document.hi
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden && RAW) load(); });
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),4000)}
 function flash(id){const e=$(id);e.classList.add('flash');setTimeout(()=>e.classList.remove('flash'),1500)}
+
+/* ---------- สิทธิ์: แอดมิน / รายพื้นที่ ---------- */
+let roleApplied=false;
+function applyRole(){
+  if(roleApplied) return; roleApplied=true;
+  const sm=document.querySelector('.brand small');
+  if(RAW.role==='area'){
+    const a=RAW.areas[0]||[];
+    if(sm) sm.textContent='พื้นที่ '+RAW.areaId;
+    const t2=document.querySelector('.titlebar h1 .t2');
+    if(t2) t2.textContent=`พื้นที่ ${a[0]} · ${a[4]?'ตำบล'+a[4]+' ':''}อำเภอ${a[5]} จังหวัด${a[6]}`;
+    $('filters').classList.add('hide'); $('btnFilter').style.display='none';
+  } else if(sm){ sm.textContent='แอดมิน · ดูทั้งระบบ'; }
+}
 
 /* ---------- filters ---------- */
 let filtersReady=false;

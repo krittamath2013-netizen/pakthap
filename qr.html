@@ -59,7 +59,7 @@
     <div><label for="fGroup">กลุ่มพื้นที่</label><select id="fGroup"><option value="">ทั้งหมด</option><option value="เดิม">พื้นที่เดิม</option><option value="ใหม่">พื้นที่ใหม่</option></select></div>
     <button class="btn" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
     <button class="btn o" id="copyAll">คัดลอกลิงก์ทั้งหมด</button>
-    <div class="hint">พิมพ์ได้หน้าละ 4 พื้นที่ (A4) · ปุ่ม “ดาวน์โหลด QR” ใช้ส่งภาพทาง LINE ให้ผู้รับผิดชอบแต่ละพื้นที่ได้</div>
+    <div class="hint">พิมพ์ได้หน้าละ 4 พื้นที่ (A4) · ปุ่ม “ดาวน์โหลด QR” ใช้ส่งภาพทาง LINE ให้ผู้รับผิดชอบแต่ละพื้นที่ได้ · รหัสเข้าระบบรายพื้นที่แสดงเฉพาะแอดมินบนหน้าจอ ไม่ถูกพิมพ์ลงโปสเตอร์ · “คัดลอกลิงก์ทั้งหมด” ได้ตาราง รหัส–พื้นที่–ผู้รับผิดชอบ–ลิงก์–รหัสผ่าน ไปวางใน Excel ได้</div>
   </div>
   <div class="grid" id="grid"></div>
 </div>
@@ -82,7 +82,7 @@ function render(){
     <div class="scan">📱 สแกนเพื่อตอบแบบสอบถาม</div>
     <div class="area">${a[3]?'ตำบล'+a[3]+' ':''}อำเภอ${a[4]}<small>จังหวัด${a[5]}</small></div>
     <div class="foot">ไม่เก็บชื่อ–นามสกุล · ข้อมูลนำเสนอในภาพรวมเท่านั้น · รหัสพื้นที่ ${a[0]}</div>
-    <div class="staff"><small>ผู้รับผิดชอบ: ${a[2]}</small>
+    <div class="staff"><small>ผู้รับผิดชอบ: ${a[2]}${a[6]?` · รหัสเข้าระบบ: <b style="font-family:monospace;color:#1f3c88">${a[6]}</b>`:''}</small>
       <button onclick="copy('${link(a)}')">คัดลอกลิงก์</button><button onclick="dl('${a[0]}')">ดาวน์โหลด QR</button></div>
   </div>`).join('');
   list.forEach(a=>{ try{ new QRCode($('qr-'+a[0]),{text:link(a),width:360,height:360,colorDark:'#1f3c88',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M}); }catch(e){ $('qr-'+a[0]).textContent='สร้าง QR ไม่สำเร็จ'; } });
@@ -92,7 +92,7 @@ function dl(id){
   const a=document.createElement('a'); a.href=c.toDataURL('image/png'); a.download='QR_พักตับ_'+id+'.png'; document.body.appendChild(a); a.click(); a.remove();
 }
 $('fProv').onchange=render; $('fGroup').onchange=render;
-$('copyAll').onclick=()=>copy(AREAS.map(a=>`${a[0]}\t${a[3]?'ต.'+a[3]+' ':''}อ.${a[4]} จ.${a[5]}\t${a[2]}\t${link(a)}`).join('\n'));
+$('copyAll').onclick=()=>copy(AREAS.map(a=>`${a[0]}\t${a[3]?'ต.'+a[3]+' ':''}อ.${a[4]} จ.${a[5]}\t${a[2]}\t${link(a)}`+(a[6]?`\t${a[6]}`:'')).join('\n'));
 google.script.run.withSuccessHandler(list=>{ AREAS=list; fillProv(); render(); })
   .withFailureHandler(e=>{ if(/รหัสผ่าน/.test(e.message)){ STAFF_KEY.clear(); location.replace('login.html?next=qr.html'); } else $('grid').innerHTML='<p style="color:#e03131">'+e.message+'</p>'; })
   .getQrAreas(KEY);
