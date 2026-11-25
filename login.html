@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>เข้าสู่ระบบเจ้าหน้าที่ — พักตับ ยืดชีวิต</title><meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+ body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f3f6fb;font-family:'IBM Plex Sans Thai',sans-serif;color:#0f172a}
+ .b{background:#fff;border-radius:18px;box-shadow:0 12px 34px rgba(31,60,136,.14);width:min(380px,92vw);overflow:hidden}
+ .t{background:#1f3c88;color:#fff;padding:20px 24px 16px;border-bottom:5px solid #ffc727}
+ .t .lg{width:42px;height:42px;border-radius:12px;background:#ffc727;color:#1f3c88;display:grid;place-items:center;font-weight:800;margin-bottom:10px}
+ .t h1{margin:0;font-size:20px}.t p{margin:2px 0 0;font-size:13.5px;opacity:.85}
+ form{padding:22px 24px 24px}
+ label{display:block;font-size:13px;color:#64748b;margin-bottom:6px}
+ input{width:100%;box-sizing:border-box;font:inherit;padding:11px 12px;border:1px solid #dfe5ee;border-radius:10px;margin-bottom:12px;background:#f7f9fc}
+ input:focus{outline:none;border-color:#1f3c88;background:#fff;box-shadow:0 0 0 3px rgba(31,60,136,.12)}
+ button{width:100%;font:inherit;font-weight:700;padding:12px;border:0;border-radius:10px;background:#f08a00;color:#fff;cursor:pointer}
+ button:disabled{opacity:.6}
+ .e{color:#e03131;font-size:13.5px;min-height:20px;margin:-4px 0 8px}
+ .back{display:block;text-align:center;margin-top:14px;font-size:13.5px;color:#1f3c88;text-decoration:none}
+</style>
+<script src="js/config.js"></script><script src="js/gas-shim.js"></script></head>
+<body><div class="b">
+ <div class="t"><div class="lg">พต</div><h1>สำหรับเจ้าหน้าที่</h1><p>Dashboard โครงการ “พักตับ ยืดชีวิต”</p></div>
+ <form id="f"><label for="k">รหัสผ่าน</label><input id="k" type="password" autocomplete="current-password" autofocus>
+  <div class="e" id="e"></div><button id="btn">เข้าสู่ระบบ</button>
+  <a class="back" href="./">← กลับไปหน้าแบบสอบถาม</a></form>
+</div>
+<script>
+ const next=(new URLSearchParams(location.search).get('next')||'dashboard.html').replace(/[^a-z.]/g,'');
+ document.getElementById('f').onsubmit=e=>{
+  e.preventDefault(); const k=document.getElementById('k').value.trim(), b=document.getElementById('btn'), er=document.getElementById('e');
+  if(!k){ er.textContent='กรุณาใส่รหัสผ่าน'; return; }
+  b.disabled=true; b.textContent='กำลังตรวจสอบ…'; er.textContent='';
+  google.script.run.withSuccessHandler(ok=>{
+    if(ok){ STAFF_KEY.set(k); location.href=next; }
+    else { er.textContent='รหัสผ่านไม่ถูกต้อง'; b.disabled=false; b.textContent='เข้าสู่ระบบ'; }
+  }).withFailureHandler(x=>{ er.textContent=x.message; b.disabled=false; b.textContent='เข้าสู่ระบบ'; }).checkKey(k);
+ };
+</script></body></html>

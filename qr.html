@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR Code รายพื้นที่ — พักตับ ยืดชีวิต</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/gas-shim.js"></script>
+<script src="js/questions.js"></script>
+<style>
+  :root{--navy:#1f3c88;--yellow:#ffc727;--orange:#f08a00;--ink:#0f172a;--ink2:#64748b;--line:#e4eaf5}
+  *{box-sizing:border-box}
+  body{margin:0;background:#f3f6fb;font-family:'IBM Plex Sans Thai',sans-serif;color:var(--ink)}
+  .wrap{max-width:1200px;margin:0 auto;padding:22px 20px 40px}
+  h1{margin:0;font-size:26px;font-weight:800;color:var(--navy)}
+  h1 em{font-style:normal;color:var(--orange)}
+  .sub{color:var(--ink2);margin:4px 0 16px;font-size:14px}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:end;background:#fff;border:1px solid var(--line);border-top:4px solid var(--yellow);border-radius:16px;padding:12px 14px;margin-bottom:18px;box-shadow:0 2px 6px rgba(31,60,136,.06)}
+  .bar label{display:block;font-size:12px;color:var(--ink2);margin:0 0 4px 2px}
+  .bar select{font:inherit;padding:8px 11px;border:1px solid #dfe5ee;border-radius:10px;background:#f7f9fc;min-width:200px}
+  .btn{font:inherit;font-weight:700;border:0;border-radius:10px;padding:9px 16px;cursor:pointer;background:var(--orange);color:#fff}
+  .btn.o{background:#fff;color:var(--navy);border:1px solid #c9d6f2}
+  .hint{flex:1 1 100%;font-size:12.5px;color:var(--ink2)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
+  .poster{background:#fff;border-radius:18px;overflow:hidden;border:1px solid var(--line);box-shadow:0 6px 20px rgba(31,60,136,.08);display:flex;flex-direction:column;break-inside:avoid}
+  .poster .top{background:var(--navy);color:#fff;padding:14px 16px 12px;border-bottom:5px solid var(--yellow);text-align:center}
+  .poster .top b{display:block;font-size:19px;font-weight:800;line-height:1.25}
+  .poster .top span{font-size:12.5px;opacity:.9}
+  .poster .qr{display:grid;place-items:center;padding:16px 16px 8px}
+  .poster .qr canvas,.poster .qr img{width:180px!important;height:180px!important}
+  .poster .scan{text-align:center;font-weight:700;color:var(--orange);font-size:15px}
+  .poster .area{text-align:center;padding:6px 14px 4px;font-size:15px;font-weight:600;color:var(--navy)}
+  .poster .area small{display:block;font-weight:400;color:var(--ink2);font-size:13px}
+  .poster .foot{margin-top:auto;padding:8px 14px 12px;text-align:center;font-size:11.5px;color:var(--ink2)}
+  .poster .staff{border-top:1px dashed var(--line);padding:8px 12px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;background:#fafbff}
+  .poster .staff small{flex:1 1 100%;text-align:center;color:var(--ink2);font-size:12px}
+  .poster .staff button{font:inherit;font-size:12.5px;border:1px solid #c9d6f2;background:#fff;color:var(--navy);border-radius:999px;padding:3px 10px;cursor:pointer}
+  .toast{position:fixed;right:20px;bottom:20px;background:#0f172a;color:#fff;padding:10px 14px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none}
+  .toast.on{opacity:1}
+  @media print{
+    body{background:#fff}.bar,.sub,h1,.staff{display:none!important}.wrap{padding:0;max-width:none}
+    .grid{grid-template-columns:1fr 1fr;gap:10mm}
+    .poster{box-shadow:none;border:1.5px solid #1f3c88;page-break-inside:avoid}
+    .poster .qr canvas,.poster .qr img{width:62mm!important;height:62mm!important}
+    .poster .top b{font-size:22px}.poster .area{font-size:17px}
+    @page{size:A4;margin:12mm}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>QR Code แบบสอบถาม <em>รายพื้นที่</em></h1>
+  <div class="sub">พิมพ์แจกหรือติดประกาศในแต่ละตำบล — ประชาชนสแกนแล้วเข้าแบบสอบถามของพื้นที่นั้นทันที (ล็อกพื้นที่ให้อัตโนมัติ ไม่แสดงชื่อผู้รับผิดชอบ)</div>
+  <div class="bar">
+    <div><label for="fProv">จังหวัด</label><select id="fProv"><option value="">ทุกจังหวัด (68 พื้นที่)</option></select></div>
+    <div><label for="fGroup">กลุ่มพื้นที่</label><select id="fGroup"><option value="">ทั้งหมด</option><option value="เดิม">พื้นที่เดิม</option><option value="ใหม่">พื้นที่ใหม่</option></select></div>
+    <button class="btn" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
+    <button class="btn o" id="copyAll">คัดลอกลิงก์ทั้งหมด</button>
+    <div class="hint">พิมพ์ได้หน้าละ 4 พื้นที่ (A4) · ปุ่ม “ดาวน์โหลด QR” ใช้ส่งภาพทาง LINE ให้ผู้รับผิดชอบแต่ละพื้นที่ได้</div>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const KEY = STAFF_KEY.get(); if(!KEY) location.replace('login.html?next=qr.html');
+const APP_URL = location.origin + location.pathname.replace(/qr\.html$/,'');
+let AREAS = []; // [id, group, name, tambon, amphoe, province]
+const $ = id => document.getElementById(id);
+const link = a => APP_URL + '?area=' + a[0];
+$('grid').innerHTML='<p style="color:#64748b">กำลังโหลดรายชื่อพื้นที่…</p>';
+const toast = t => { const e=$('toast'); e.textContent=t; e.classList.add('on'); setTimeout(()=>e.classList.remove('on'),2500); };
+function copy(t){ const x=document.createElement('textarea'); x.value=t; document.body.appendChild(x); x.select(); try{document.execCommand('copy');toast('คัดลอกแล้ว');}catch(e){} x.remove(); }
+function fillProv(){ $('fProv').innerHTML += [...new Set(AREAS.map(a=>a[5]))].sort((a,b)=>a.localeCompare(b,'th')).map(p=>`<option>${p}</option>`).join(''); }
+function render(){
+  const P=$('fProv').value, G=$('fGroup').value, list=AREAS.filter(a=>(!P||a[5]===P)&&(!G||a[1]===G));
+  $('grid').innerHTML=list.map(a=>`<div class="poster">
+    <div class="top"><b>ร่วมตอบแบบสอบถาม<br>“พักตับ ยืดชีวิต”</b><span>ความรอบรู้ด้านสุขภาพ เรื่องเหล้า · ใช้เวลา 5–7 นาที</span></div>
+    <div class="qr" id="qr-${a[0]}"></div>
+    <div class="scan">📱 สแกนเพื่อตอบแบบสอบถาม</div>
+    <div class="area">${a[3]?'ตำบล'+a[3]+' ':''}อำเภอ${a[4]}<small>จังหวัด${a[5]}</small></div>
+    <div class="foot">ไม่เก็บชื่อ–นามสกุล · ข้อมูลนำเสนอในภาพรวมเท่านั้น · รหัสพื้นที่ ${a[0]}</div>
+    <div class="staff"><small>ผู้รับผิดชอบ: ${a[2]}</small>
+      <button onclick="copy('${link(a)}')">คัดลอกลิงก์</button><button onclick="dl('${a[0]}')">ดาวน์โหลด QR</button></div>
+  </div>`).join('');
+  list.forEach(a=>{ try{ new QRCode($('qr-'+a[0]),{text:link(a),width:360,height:360,colorDark:'#1f3c88',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M}); }catch(e){ $('qr-'+a[0]).textContent='สร้าง QR ไม่สำเร็จ'; } });
+}
+function dl(id){
+  const c=document.querySelector('#qr-'+id+' canvas'); if(!c) return;
+  const a=document.createElement('a'); a.href=c.toDataURL('image/png'); a.download='QR_พักตับ_'+id+'.png'; document.body.appendChild(a); a.click(); a.remove();
+}
+$('fProv').onchange=render; $('fGroup').onchange=render;
+$('copyAll').onclick=()=>copy(AREAS.map(a=>`${a[0]}\t${a[3]?'ต.'+a[3]+' ':''}อ.${a[4]} จ.${a[5]}\t${a[2]}\t${link(a)}`).join('\n'));
+google.script.run.withSuccessHandler(list=>{ AREAS=list; fillProv(); render(); })
+  .withFailureHandler(e=>{ if(/รหัสผ่าน/.test(e.message)){ STAFF_KEY.clear(); location.replace('login.html?next=qr.html'); } else $('grid').innerHTML='<p style="color:#e03131">'+e.message+'</p>'; })
+  .getQrAreas(KEY);
+</script>
+</body>
+</html>
