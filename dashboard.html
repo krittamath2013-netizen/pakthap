@@ -274,6 +274,7 @@
       <li><a data-go="secOverview" class="act"><svg class="ic"><use href="#i-home"/></svg>ภาพรวม</a></li>
       <li><a data-go="secProgress" class="sub"><svg class="ic"><use href="#i-trend"/></svg>ความก้าวหน้า</a></li>
       <li><a data-go="secAreas" class="sub"><svg class="ic"><use href="#i-table"/></svg>สถานะรายพื้นที่</a></li>
+      <li><a data-go="secVillage" class="sub"><svg class="ic"><use href="#i-pin"/></svg>ผลรายหมู่บ้าน</a></li>
       <li><a data-go="secHL" class="sub"><svg class="ic"><use href="#i-brain"/></svg>ความรอบรู้ (HL)</a></li>
       <li><a data-go="secMedia" class="sub"><svg class="ic"><use href="#i-mega"/></svg>สื่อ/กิจกรรมรณรงค์</a></li>
       <li><a data-go="secDemo" class="sub"><svg class="ic"><use href="#i-users"/></svg>ข้อมูลผู้ตอบ</a></li>
@@ -352,6 +353,17 @@
             <th data-k="last">ส่งล่าสุด</th><th class="num" data-k="hl">HL เฉลี่ย</th><th data-k="st">สถานะ</th><th></th>
           </tr></thead>
           <tbody id="tbody"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <section class="sec card cc-green" id="secVillage" style="margin-bottom:14px">
+      <div class="hd"><svg class="ic"><use href="#i-pin"/></svg>ผลรายตำบล / หมู่บ้าน<span class="sp"></span><small>ตามที่ผู้ตอบระบุ · คลิกหัวคอลัมน์เพื่อเรียง</small></div>
+      <div class="bd">
+        <div class="cap" id="vilCap"></div>
+        <div class="tblwrap" style="max-height:440px"><table>
+          <thead><tr><th data-vk="area">พื้นที่</th><th data-vk="tam">ตำบล</th><th class="num" data-vk="moo">หมู่</th><th data-vk="vil">ชื่อหมู่บ้าน</th><th class="num" data-vk="n">ผู้ตอบ</th><th data-vk="share">สัดส่วน</th><th class="num" data-vk="hl">HL เฉลี่ย</th><th class="num" data-vk="good">ระดับดี</th></tr></thead>
+          <tbody id="vbody"></tbody>
         </table></div>
       </div>
     </section>
@@ -560,7 +572,8 @@ window.Report = (function(){
       const s11=i3.reduce((a,b)=>a+b,0), s12=i5.reduce((a,b)=>a+b,0), pct=(s11+s12)/MAX()*100;
       return {ai:r[0],id:A[0],group:A[1],name:A[2],tambon:A[4],amphoe:A[5],prov:A[6],region:A[7],d:r[1],
         i3,i3raw,i5,s11,s12,m11:s11/i3.length,m12:s12/i5.length,pct,lv:pct>=s.good?0:pct>=s.fair?1:2,
-        sex:r[4],ageG:r[5],rel:r[6],edu:r[7],mun:r[8],org:r[9],aw:r[10],aws:r[11],jn:r[12],jns:r[13],age:r.length>14?r[14]:-1};
+        sex:r[4],ageG:r[5],rel:r[6],edu:r[7],mun:r[8],org:r[9],aw:r[10],aws:r[11],jn:r[12],jns:r[13],age:r.length>14?r[14]:-1,
+        tamR:r[15]||'',moo:r[16]||0,vil:r[17]||''};
     });
   }
 
@@ -607,10 +620,15 @@ window.Report = (function(){
     if(sub){ const vals=[...new Set(L.map(sub.key))].sort((a,b)=>String(a).localeCompare(String(b),'th')); if(vals.length>1) F.push([sub.name,vals.map(v=>[sub.label(v,L),r=>sub.key(r)===v])]); }
     return F;
   }
+  // หมู่บ้าน: จัดกลุ่มด้วย ตำบล+หมู่ที่ แสดงชื่อที่ผู้ตอบพิมพ์บ่อยที่สุด
+  const vilKey = r => (r.tamR||'-')+'|'+(r.moo||0);
+  function vilLabel(v,L){ const [t,m]=v.split('|'); const c={}; L.forEach(x=>{ if(vilKey(x)===v&&x.vil) c[x.vil]=(c[x.vil]||0)+1; });
+    const nm=Object.keys(c).sort((a,b)=>c[b]-c[a])[0]; return Number(m)?`ต.${t} ม.${m}${nm?' '+nm:''}`:`ต.${t} (ไม่ระบุหมู่)`; }
   function subUnit(level){
     if(level==='all') return {name:'ภาค',key:r=>r.region,label:v=>'ภาค'+v};
     if(level==='region') return {name:'จังหวัด',key:r=>r.prov,label:v=>v};
     if(level==='province') return {name:'พื้นที่',key:r=>r.id,label:(v,L)=>{const r=L.find(x=>x.id===v);return `${v} ${r.tambon?'ต.'+r.tambon:'อ.'+r.amphoe}`;}};
+    if(level==='area') return {name:'หมู่บ้าน',key:vilKey,label:vilLabel};
     return null;
   }
 
@@ -808,6 +826,8 @@ window.Report = (function(){
     dyn('region','ภาค',r=>r.region,v=>'ภาค'+v);
     dyn('prov','จังหวัด',r=>r.prov,v=>v);
     dyn('area','พื้นที่ดำเนินงาน',r=>r.id,(v,L)=>{const r=L.find(x=>x.id===v);return `${v} ${r.tambon?'ต.'+r.tambon:'อ.'+r.amphoe}`;});
+    dyn('tamR','ตำบลที่ผู้ตอบอาศัย',r=>r.tamR||'ไม่ระบุ',v=>v==='ไม่ระบุ'?v:'ต.'+v);
+    dyn('vil','หมู่บ้าน (ตำบล + หมู่ที่)',vilKey,vilLabel);
     return V;
   }
   function resolve(v,L){
@@ -1111,6 +1131,11 @@ window.Report = (function(){
           <div><label class="f" for="fpAmphoe">25. อำเภอ</label><input type="text" id="fpAmphoe"></div>
         </div>
         <label class="f" for="fpTambon">26. ตำบล</label><input type="text" id="fpTambon">
+        <div class="q" data-req="moo" style="border-top:0;padding-top:4px"><div class="t"><span class="no">26.1</span>หมู่บ้านที่ท่านอาศัยอยู่</div>
+          <div class="row"><div style="flex:0 0 130px"><select id="fpMoo"><option value="">หมู่ที่</option></select></div>
+          <div><input type="text" id="fpVilName" list="fpVilList" placeholder="ชื่อหมู่บ้าน เช่น บ้านดอนจาน" autocomplete="off"></div></div>
+          <datalist id="fpVilList"></datalist>
+          <div class="sub" style="margin:6px 0 0;font-size:13px">เลือกหมู่ที่ ระบบจะเติมชื่อหมู่บ้านที่คนในพื้นที่เคยกรอกไว้ให้ แก้ไขได้</div></div>
         <div class="q" data-req="municipality"><div class="t"><span class="no">27.</span>เขตการปกครอง</div><div class="opts" id="fpO_municipality"></div></div>
         <div class="q" data-req="sex"><div class="t"><span class="no">28.</span>เพศ</div><div class="opts v" id="fpO_sex"></div>
           <input type="text" class="other" id="fpSexOther" placeholder="โปรดระบุ"></div>
@@ -1169,6 +1194,7 @@ window.FormPanel = (function(){
     $('fpO_religion').innerHTML = opts('religion',Q.religion);
     $('fpO_edu').innerHTML += Q.edu.map((e,i)=>`<option value="${i+1}">${i+1}) ${e}</option>`).join('');
     $('fpO_orgType').innerHTML += Q.orgType.map((e,i)=>`<option value="${i+1}">(${i+1}) ${e}</option>`).join('');
+    $('fpMoo').innerHTML='<option value="">หมู่ที่</option>'+Array.from({length:30},(_,i)=>`<option value="${i+1}">หมู่ ${i+1}</option>`).join('')+'<option value="0">ไม่ทราบ</option>';
     const M=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
     $('fpBirthD').innerHTML='<option value="">วัน</option>'+Array.from({length:31},(_,i)=>`<option>${i+1}</option>`).join('');
     $('fpBirthM').innerHTML='<option value="">เดือน</option>'+M.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('');
@@ -1181,6 +1207,7 @@ window.FormPanel = (function(){
     if(k==='edu') return !!$('fpO_edu').value;
     if(k==='orgType') return !!$('fpO_orgType').value;
     if(k==='birth') return !!($('fpBirthD').value&&$('fpBirthM').value&&$('fpBirthY').value);
+    if(k==='moo') return $('fpMoo').value!=='';
     return !!radio(k);
   }
   function progress(){
@@ -1205,8 +1232,20 @@ window.FormPanel = (function(){
     store.set('pakthap_area',id);
     if(a.name){ box.innerHTML=`<b>${a.id}</b> · พื้นที่${a.group} · ${a.org}<br>ส่งแล้ว <b>${a.count}</b> / เป้าหมาย ${a.target} ชุด`; box.classList.add('on'); }
     $('fpProvince').value=a.province; $('fpAmphoe').value=a.amphoe; $('fpTambon').value=a.tambon;
+    loadVillages(a.id);
   }
 
+  let VIL=[], vilArea='';
+  function loadVillages(id){
+    if(id===vilArea) return; vilArea=id; VIL=[]; $('fpVilList').innerHTML='';
+    google.script.run.withSuccessHandler(list=>{ VIL=list||[];
+      $('fpVilList').innerHTML=[...new Set(VIL.map(v=>v[2]))].map(n=>`<option value="${n.replace(/"/g,'&quot;')}">`).join('');
+    }).withFailureHandler(()=>{}).getVillages(id);
+  }
+  function suggestVillage(){
+    const m=Number($('fpMoo').value), t=$('fpTambon').value.trim(); if(!m||$('fpVilName').value.trim()) return;
+    const hit=VIL.find(v=>v[1]===m&&(!t||v[0]===t))||VIL.find(v=>v[1]===m); if(hit) $('fpVilName').value=hit[2];
+  }
   function toast(t){const e=$('fpToast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),3500)}
   function scrollTo(el){ try{ el.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){} }
 
@@ -1220,7 +1259,8 @@ window.FormPanel = (function(){
       municipality:radio('municipality'), sex:radio('sex'), sexOther:$('fpSexOther').value,
       birthD:$('fpBirthD').value, birthM:$('fpBirthM').value, birthY:$('fpBirthY').value,
       religion:radio('religion'), religionOther:$('fpReligionOther').value,
-      edu:$('fpO_edu').value, eduOther:$('fpEduOther').value, village:$('fpVillage').value.trim(), orgType:$('fpO_orgType').value
+      edu:$('fpO_edu').value, eduOther:$('fpEduOther').value, village:$('fpVillage').value.trim(), orgType:$('fpO_orgType').value,
+      moo:$('fpMoo').value, villageName:$('fpVilName').value.trim()
     };
   }
   function validate(){
@@ -1236,10 +1276,10 @@ window.FormPanel = (function(){
   function reset(){
     document.querySelectorAll('#fp main input[type=radio],#fp main input[type=checkbox]').forEach(i=>i.checked=false);
     $('fpSecConsent').classList.remove('err');
-    ['fpCode','fpAwareEx','fpAwareOther','fpJoinedEx','fpJoinedOther','fpSexOther','fpReligionOther','fpEduOther','fpVillage'].forEach(id=>$(id).value='');
+    ['fpCode','fpAwareEx','fpAwareOther','fpJoinedEx','fpJoinedOther','fpSexOther','fpReligionOther','fpEduOther','fpVillage','fpVilName','fpMoo'].forEach(id=>$(id).value='');
     ['fpBirthD','fpBirthM','fpBirthY','fpO_edu','fpO_orgType'].forEach(id=>$(id).value='');
     document.querySelectorAll('#fp .cond,#fp .other,#fp .q.err').forEach(e=>e.classList.remove('on','err'));
-    selectArea($('fpArea').value); progress(); $('fpScroll').scrollTop=0; if(cfg.mode==='page') window.scrollTo(0,0);
+    vilArea=''; selectArea($('fpArea').value); progress(); $('fpScroll').scrollTop=0; if(cfg.mode==='page') window.scrollTo(0,0);
   }
 
   function bind(){
@@ -1250,6 +1290,7 @@ window.FormPanel = (function(){
       if(t.name==='sex') $('fpSexOther').classList.toggle('on',t.value==='5');
       if(t.name==='religion') $('fpReligionOther').classList.toggle('on',t.value==='5');
       if(t.id==='fpO_edu') $('fpEduOther').classList.toggle('on',t.value==='10');
+      if(t.id==='fpMoo') suggestVillage();
       if(t.closest('#fpAwareSrc')) $('fpAwareOther').classList.toggle('on',checks('fpAwareSrc').includes(10));
       if(t.closest('#fpJoinedSrc')) $('fpJoinedOther').classList.toggle('on',checks('fpJoinedSrc').includes(10));
       const q=t.closest('.q'); if(q&&answered(q.dataset.req)) q.classList.remove('err');
@@ -1395,6 +1436,7 @@ function initFilters(){
   $('fText').onkeydown=e=>{if(e.key==='Enter')apply();};
   $('btnApply').onclick=apply;
   $('btnClear').onclick=()=>{$('fGroup').value='';$('fRegion').value='';$('fText').value='';initFilters();$('fProv').value='';F.status='';apply();};
+  document.querySelectorAll('th[data-vk]').forEach(th=>th.onclick=()=>{const k=th.dataset.vk;VSORT.dir=VSORT.k===k?-VSORT.dir:(['n','hl','good','share'].includes(k)?-1:1);VSORT.k=k;renderVillage();});
   document.querySelectorAll('th[data-k]').forEach(th=>th.onclick=()=>{const k=th.dataset.k;SORT.dir=SORT.k===k?-SORT.dir:(k==='pct'||k==='count'||k==='hl'||k==='today'?-1:1);SORT.k=k;renderTable();});
 }
 
@@ -1412,7 +1454,7 @@ function compute(){
     const i3=r[2].split('').map((v,k)=>revIdx[k]?4-Number(v):Number(v)), i5=r[3].split('').map(Number);
     const total=i3.reduce((x,y)=>x+y,0)+i5.reduce((x,y)=>x+y,0);
     const pct=total/MAX*100;
-    return {a:r[0],d:r[1],i3,i5,pct,lv:pct>=s.good?0:pct>=s.fair?1:2,sex:r[4],age:r[5],rel:r[6],edu:r[7],mun:r[8],org:r[9],aw:r[10],aws:r[11],jn:r[12],jns:r[13]};
+    return {a:r[0],d:r[1],i3,i5,pct,lv:pct>=s.good?0:pct>=s.fair?1:2,sex:r[4],age:r[5],rel:r[6],edu:r[7],mun:r[8],org:r[9],aw:r[10],aws:r[11],jn:r[12],jns:r[13],tam:r[15]||'',moo:r[16]||0,vil:r[17]||''};
   });
   resp.forEach(r=>{const a=areas[r.a];a.count++;a.hlSum+=r.pct;if(r.d===today)a.today++;if(r.d>a.last)a.last=r.d;});
 
@@ -1434,7 +1476,7 @@ function compute(){
 }
 
 /* ---------- render ---------- */
-function render(){ compute(); renderKPI(); renderDonut(); renderPlan(); renderProv(); renderTrend(); renderChips(); renderTable(); renderHL(); renderMedia(); renderItems(); renderDemo(); }
+function render(){ compute(); renderKPI(); renderDonut(); renderPlan(); renderProv(); renderTrend(); renderChips(); renderTable(); renderVillage(); renderHL(); renderMedia(); renderItems(); renderDemo(); }
 
 function setKPI(id,v,d){const e=$(id);e.querySelector('.v').innerHTML=v;e.querySelector('.d').innerHTML=d||'';}
 function renderKPI(){
@@ -1551,6 +1593,24 @@ function renderTrend(){
     scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8,autoSkip:true},border:{color:css('--line')}},y:{beginAtZero:true,grid:{color:css('--line')},border:{display:false},ticks:{precision:0}}}})});
 }
 
+let VSORT={k:'area',dir:1};
+function renderVillage(){
+  if(IS_PUBLIC) return;
+  const {resp}=VIEW, g={};
+  resp.forEach(r=>{const A=RAW.areas[r.a], k=A[0]+'|'+(r.tam||'-')+'|'+(r.moo||0);
+    const o=g[k]||(g[k]={area:A[0],tam:r.tam||'–',moo:r.moo||0,names:{},n:0,hl:0,good:0});
+    o.n++; o.hl+=r.pct; if(r.lv===0)o.good++; if(r.vil)o.names[r.vil]=(o.names[r.vil]||0)+1;});
+  let rows=Object.values(g).map(o=>{const nm=Object.keys(o.names).sort((a,b)=>o.names[b]-o.names[a]);
+    return Object.assign(o,{vil:nm[0]||'',alt:nm.slice(1),hl:o.hl/o.n,good:o.good/o.n*100,share:o.n/(resp.length||1)*100});});
+  const k=VSORT.k,d=VSORT.dir;
+  rows.sort((x,y)=>{const a=x[k],b=y[k];return (typeof a==='string'?String(a).localeCompare(String(b),'th'):a-b)*d || x.area.localeCompare(y.area) || x.moo-y.moo;});
+  const noMoo=resp.filter(r=>!r.moo).length;
+  $('vilCap').textContent=`${rows.length} หมู่บ้าน/กลุ่ม จากผู้ตอบ ${fmt(resp.length)} คน`+(noMoo?` · ไม่ระบุหมู่ ${fmt(noMoo)} คน`:'')+' · ชื่อหมู่บ้านใช้ชื่อที่ผู้ตอบพิมพ์บ่อยที่สุดในหมู่นั้น';
+  $('vbody').innerHTML=rows.map(o=>`<tr><td>${o.area}</td><td>${o.tam}</td><td class="num">${o.moo||'–'}</td>
+    <td>${o.vil||'<span class="muted">–</span>'}${o.alt.length?` <span class="muted" style="font-size:12px" title="${o.alt.join(', ')}">(+${o.alt.length} แบบสะกด)</span>`:''}</td>
+    <td class="num">${fmt(o.n)}</td><td><div class="pb"><div class="t"><i style="width:${Math.min(100,o.share*4)}%;background:var(--s3)"></i></div><span class="muted" style="font-size:12px;min-width:40px;text-align:right">${o.share.toFixed(1)}%</span></div></td>
+    <td class="num">${o.hl.toFixed(1)}%</td><td class="num">${o.good.toFixed(0)}%</td></tr>`).join('')||'<tr><td colspan="8" class="muted" style="text-align:center;padding:18px">ยังไม่มีข้อมูล</td></tr>';
+}
 function renderChips(){
   const {sel}=VIEW; const cnt={}; sel.forEach(a=>cnt[a.st]=(cnt[a.st]||0)+1);
   const silent=sel.filter(a=>a.st!=='done'&&a.silent!==null&&a.silent>VIEW.s.silentDays).length;

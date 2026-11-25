@@ -172,6 +172,11 @@
           <div><label class="f" for="fpAmphoe">25. อำเภอ</label><input type="text" id="fpAmphoe"></div>
         </div>
         <label class="f" for="fpTambon">26. ตำบล</label><input type="text" id="fpTambon">
+        <div class="q" data-req="moo" style="border-top:0;padding-top:4px"><div class="t"><span class="no">26.1</span>หมู่บ้านที่ท่านอาศัยอยู่</div>
+          <div class="row"><div style="flex:0 0 130px"><select id="fpMoo"><option value="">หมู่ที่</option></select></div>
+          <div><input type="text" id="fpVilName" list="fpVilList" placeholder="ชื่อหมู่บ้าน เช่น บ้านดอนจาน" autocomplete="off"></div></div>
+          <datalist id="fpVilList"></datalist>
+          <div class="sub" style="margin:6px 0 0;font-size:13px">เลือกหมู่ที่ ระบบจะเติมชื่อหมู่บ้านที่คนในพื้นที่เคยกรอกไว้ให้ แก้ไขได้</div></div>
         <div class="q" data-req="municipality"><div class="t"><span class="no">27.</span>เขตการปกครอง</div><div class="opts" id="fpO_municipality"></div></div>
         <div class="q" data-req="sex"><div class="t"><span class="no">28.</span>เพศ</div><div class="opts v" id="fpO_sex"></div>
           <input type="text" class="other" id="fpSexOther" placeholder="โปรดระบุ"></div>
@@ -230,6 +235,7 @@ window.FormPanel = (function(){
     $('fpO_religion').innerHTML = opts('religion',Q.religion);
     $('fpO_edu').innerHTML += Q.edu.map((e,i)=>`<option value="${i+1}">${i+1}) ${e}</option>`).join('');
     $('fpO_orgType').innerHTML += Q.orgType.map((e,i)=>`<option value="${i+1}">(${i+1}) ${e}</option>`).join('');
+    $('fpMoo').innerHTML='<option value="">หมู่ที่</option>'+Array.from({length:30},(_,i)=>`<option value="${i+1}">หมู่ ${i+1}</option>`).join('')+'<option value="0">ไม่ทราบ</option>';
     const M=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
     $('fpBirthD').innerHTML='<option value="">วัน</option>'+Array.from({length:31},(_,i)=>`<option>${i+1}</option>`).join('');
     $('fpBirthM').innerHTML='<option value="">เดือน</option>'+M.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('');
@@ -242,6 +248,7 @@ window.FormPanel = (function(){
     if(k==='edu') return !!$('fpO_edu').value;
     if(k==='orgType') return !!$('fpO_orgType').value;
     if(k==='birth') return !!($('fpBirthD').value&&$('fpBirthM').value&&$('fpBirthY').value);
+    if(k==='moo') return $('fpMoo').value!=='';
     return !!radio(k);
   }
   function progress(){
@@ -266,8 +273,20 @@ window.FormPanel = (function(){
     store.set('pakthap_area',id);
     if(a.name){ box.innerHTML=`<b>${a.id}</b> · พื้นที่${a.group} · ${a.org}<br>ส่งแล้ว <b>${a.count}</b> / เป้าหมาย ${a.target} ชุด`; box.classList.add('on'); }
     $('fpProvince').value=a.province; $('fpAmphoe').value=a.amphoe; $('fpTambon').value=a.tambon;
+    loadVillages(a.id);
   }
 
+  let VIL=[], vilArea='';
+  function loadVillages(id){
+    if(id===vilArea) return; vilArea=id; VIL=[]; $('fpVilList').innerHTML='';
+    google.script.run.withSuccessHandler(list=>{ VIL=list||[];
+      $('fpVilList').innerHTML=[...new Set(VIL.map(v=>v[2]))].map(n=>`<option value="${n.replace(/"/g,'&quot;')}">`).join('');
+    }).withFailureHandler(()=>{}).getVillages(id);
+  }
+  function suggestVillage(){
+    const m=Number($('fpMoo').value), t=$('fpTambon').value.trim(); if(!m||$('fpVilName').value.trim()) return;
+    const hit=VIL.find(v=>v[1]===m&&(!t||v[0]===t))||VIL.find(v=>v[1]===m); if(hit) $('fpVilName').value=hit[2];
+  }
   function toast(t){const e=$('fpToast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),3500)}
   function scrollTo(el){ try{ el.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){} }
 
@@ -281,7 +300,8 @@ window.FormPanel = (function(){
       municipality:radio('municipality'), sex:radio('sex'), sexOther:$('fpSexOther').value,
       birthD:$('fpBirthD').value, birthM:$('fpBirthM').value, birthY:$('fpBirthY').value,
       religion:radio('religion'), religionOther:$('fpReligionOther').value,
-      edu:$('fpO_edu').value, eduOther:$('fpEduOther').value, village:$('fpVillage').value.trim(), orgType:$('fpO_orgType').value
+      edu:$('fpO_edu').value, eduOther:$('fpEduOther').value, village:$('fpVillage').value.trim(), orgType:$('fpO_orgType').value,
+      moo:$('fpMoo').value, villageName:$('fpVilName').value.trim()
     };
   }
   function validate(){
@@ -297,10 +317,10 @@ window.FormPanel = (function(){
   function reset(){
     document.querySelectorAll('#fp main input[type=radio],#fp main input[type=checkbox]').forEach(i=>i.checked=false);
     $('fpSecConsent').classList.remove('err');
-    ['fpCode','fpAwareEx','fpAwareOther','fpJoinedEx','fpJoinedOther','fpSexOther','fpReligionOther','fpEduOther','fpVillage'].forEach(id=>$(id).value='');
+    ['fpCode','fpAwareEx','fpAwareOther','fpJoinedEx','fpJoinedOther','fpSexOther','fpReligionOther','fpEduOther','fpVillage','fpVilName','fpMoo'].forEach(id=>$(id).value='');
     ['fpBirthD','fpBirthM','fpBirthY','fpO_edu','fpO_orgType'].forEach(id=>$(id).value='');
     document.querySelectorAll('#fp .cond,#fp .other,#fp .q.err').forEach(e=>e.classList.remove('on','err'));
-    selectArea($('fpArea').value); progress(); $('fpScroll').scrollTop=0; if(cfg.mode==='page') window.scrollTo(0,0);
+    vilArea=''; selectArea($('fpArea').value); progress(); $('fpScroll').scrollTop=0; if(cfg.mode==='page') window.scrollTo(0,0);
   }
 
   function bind(){
@@ -311,6 +331,7 @@ window.FormPanel = (function(){
       if(t.name==='sex') $('fpSexOther').classList.toggle('on',t.value==='5');
       if(t.name==='religion') $('fpReligionOther').classList.toggle('on',t.value==='5');
       if(t.id==='fpO_edu') $('fpEduOther').classList.toggle('on',t.value==='10');
+      if(t.id==='fpMoo') suggestVillage();
       if(t.closest('#fpAwareSrc')) $('fpAwareOther').classList.toggle('on',checks('fpAwareSrc').includes(10));
       if(t.closest('#fpJoinedSrc')) $('fpJoinedOther').classList.toggle('on',checks('fpJoinedSrc').includes(10));
       const q=t.closest('.q'); if(q&&answered(q.dataset.req)) q.classList.remove('err');
