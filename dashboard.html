@@ -598,7 +598,7 @@ window.Report = (function(){
     if(lev==='province') opts=[...new Set(A.map(a=>a[6]))].sort((x,y)=>x.localeCompare(y,'th')).map(v=>[v,'จังหวัด'+v]);
     if(lev==='area') opts=A.map(a=>[a[0],`${a[0]} · ${a[4]?'ต.'+a[4]+' ':''}อ.${a[5]} จ.${a[6]} · ${a[2]}`]);
     sel.disabled=lev==='all';
-    sel.innerHTML=lev==='all'?'<option value="">ทั้งโครงการ (68 พื้นที่)</option>':opts.map(o=>`<option value="${esc(o[0])}">${esc(o[1])}</option>`).join('');
+    sel.innerHTML=lev==='all'?`<option value="">ทั้งโครงการ (${A.length} พื้นที่)</option>`:opts.map(o=>`<option value="${esc(o[0])}">${esc(o[1])}</option>`).join('');
   }
 
   /* ---------- ตารางช่วย ---------- */

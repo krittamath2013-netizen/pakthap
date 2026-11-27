@@ -55,7 +55,7 @@
   <h1>QR Code แบบสอบถาม <em>รายพื้นที่</em></h1>
   <div class="sub">พิมพ์แจกหรือติดประกาศในแต่ละตำบล — ประชาชนสแกนแล้วเข้าแบบสอบถามของพื้นที่นั้นทันที (ล็อกพื้นที่ให้อัตโนมัติ ไม่แสดงชื่อผู้รับผิดชอบ)</div>
   <div class="bar">
-    <div><label for="fProv">จังหวัด</label><select id="fProv"><option value="">ทุกจังหวัด (68 พื้นที่)</option></select></div>
+    <div><label for="fProv">จังหวัด</label><select id="fProv"><option value="">ทุกจังหวัด</option></select></div>
     <div><label for="fKind">แบบฟอร์ม</label><select id="fKind"><option value="a13">แบบสอบถาม A13 (ไม่ระบุชื่อ)</option><option value="audit">แบบคัดกรอง AUDIT (เก็บชื่อ–เบอร์)</option></select></div>
     <div><label for="fGroup">กลุ่มพื้นที่</label><select id="fGroup"><option value="">ทั้งหมด</option><option value="เดิม">พื้นที่เดิม</option><option value="ใหม่">พื้นที่ใหม่</option></select></div>
     <button class="btn" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
@@ -79,7 +79,7 @@ const PTXT = {
 };
 const toast = t => { const e=$('toast'); e.textContent=t; e.classList.add('on'); setTimeout(()=>e.classList.remove('on'),2500); };
 function copy(t){ const x=document.createElement('textarea'); x.value=t; document.body.appendChild(x); x.select(); try{document.execCommand('copy');toast('คัดลอกแล้ว');}catch(e){} x.remove(); }
-function fillProv(){ $('fProv').innerHTML += [...new Set(AREAS.map(a=>a[5]))].sort((a,b)=>a.localeCompare(b,'th')).map(p=>`<option>${p}</option>`).join(''); }
+function fillProv(){ $('fProv').options[0].textContent=`ทุกจังหวัด (${AREAS.length} พื้นที่)`; $('fProv').innerHTML += [...new Set(AREAS.map(a=>a[5]))].sort((a,b)=>a.localeCompare(b,'th')).map(p=>`<option>${p}</option>`).join(''); }
 function render(){
   const P=$('fProv').value, G=$('fGroup').value, list=AREAS.filter(a=>(!P||a[5]===P)&&(!G||a[1]===G));
   $('grid').innerHTML=list.map(a=>`<div class="poster">
