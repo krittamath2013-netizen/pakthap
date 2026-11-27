@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>พักตับ ยืดชีวิต — สถิติความรอบรู้ด้านสุขภาพ เรื่องเหล้า</title>
 <meta property="og:title" content="พักตับ ยืดชีวิต — ผลสำรวจความรอบรู้ด้านสุขภาพ เรื่องเหล้า">
-<meta property="og:description" content="สถิติแบบเรียลไทม์จาก 68 พื้นที่ทั่วประเทศ · ร่วมตอบแบบสอบถามได้ที่นี่">
+<meta property="og:description" content="สถิติแบบเรียลไทม์จากพื้นที่ดำเนินงานทั่วประเทศ · ร่วมตอบแบบสอบถามได้ที่นี่">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -361,7 +361,7 @@
     <div class="q">“</div>
     <div class="t">ร่วมตอบแบบสอบถามแล้ว</div>
     <div><span class="n" id="heroN">…</span><span class="u">คน</span></div>
-    <div class="s">จาก 68 พื้นที่ดำเนินงานทั่วประเทศ</div>
+    <div class="s">จาก <span class="nAreas">73</span> พื้นที่ดำเนินงานทั่วประเทศ</div>
   </div>
   <div class="r">
     <h2>ผลสำรวจ <em>ความรอบรู้ด้านสุขภาพ เรื่องเหล้า</em> แบบเรียลไทม์</h2>
@@ -516,7 +516,7 @@
       <div class="hd"><svg class="ic"><use href="#i-table"/></svg>เกี่ยวกับโครงการ</div>
       <div class="bd">
         <p><b>โครงการสานพลังเครือข่ายหมออนามัยและระบบสุขภาพปฐมภูมิ เพื่อพัฒนาระบบและชุมชนจัดการตนเองในการลดการดื่มเครื่องดื่มแอลกอฮอล์ที่เสี่ยง ด้วยกลยุทธ์ “พักตับ ยืดชีวิต”</b></p>
-        <p>สำรวจความรอบรู้ด้านสุขภาพในประเด็นเสี่ยงด้านเหล้า (แบบสำรวจ A13) ของประชาชนในพื้นที่ดำเนินงาน 68 พื้นที่ทั่วประเทศ เพื่อนำผลไปพัฒนากิจกรรมลด ละ เลิกเครื่องดื่มแอลกอฮอล์ในชุมชน</p>
+        <p>สำรวจความรอบรู้ด้านสุขภาพในประเด็นเสี่ยงด้านเหล้า (แบบสำรวจ A13) ของประชาชนในพื้นที่ดำเนินงาน <span class="nAreas">73</span> พื้นที่ทั่วประเทศ เพื่อนำผลไปพัฒนากิจกรรมลด ละ เลิกเครื่องดื่มแอลกอฮอล์ในชุมชน</p>
         <div class="grid3">
           <div><b>ใครตอบได้</b>ประชาชนในพื้นที่ดำเนินงาน อายุ 15 ปีขึ้นไป ใช้เวลา 5–7 นาที</div>
           <div><b>ความเป็นส่วนตัว</b>ไม่เก็บชื่อ–นามสกุล หรือเลขบัตรประชาชน นำเสนอผลเป็นภาพรวมเท่านั้น</div>
@@ -713,7 +713,7 @@ window.Report = (function(){
     if(lev==='province') opts=[...new Set(A.map(a=>a[6]))].sort((x,y)=>x.localeCompare(y,'th')).map(v=>[v,'จังหวัด'+v]);
     if(lev==='area') opts=A.map(a=>[a[0],`${a[0]} · ${a[4]?'ต.'+a[4]+' ':''}อ.${a[5]} จ.${a[6]} · ${a[2]}`]);
     sel.disabled=lev==='all';
-    sel.innerHTML=lev==='all'?'<option value="">ทั้งโครงการ (68 พื้นที่)</option>':opts.map(o=>`<option value="${esc(o[0])}">${esc(o[1])}</option>`).join('');
+    sel.innerHTML=lev==='all'?`<option value="">ทั้งโครงการ (${A.length} พื้นที่)</option>`:opts.map(o=>`<option value="${esc(o[0])}">${esc(o[1])}</option>`).join('');
   }
 
   /* ---------- ตารางช่วย ---------- */
@@ -1084,7 +1084,7 @@ window.Report = (function(){
   }
   return {
     init,
-    setData(raw){ const first=!RAW; RAW=raw; if(first){ if(raw.role==='area'){ $('rpLevel').innerHTML='<option value="area">พื้นที่ของฉัน</option>'; } fillUnits(); } if(builtCount!==null && raw.resp.length!==builtCount) $('rpNew').classList.add('on'); },
+    setData(raw){ document.querySelectorAll('.nAreas').forEach(e=>e.textContent=raw.areas.length); const first=!RAW; RAW=raw; if(first){ if(raw.role==='area'){ $('rpLevel').innerHTML='<option value="area">พื้นที่ของฉัน</option>'; } fillUnits(); } if(builtCount!==null && raw.resp.length!==builtCount) $('rpNew').classList.add('on'); },
     show(mode){ init(); setMode(mode||MODE); },
     build
   };
