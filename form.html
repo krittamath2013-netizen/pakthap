@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>แบบสอบถามความรอบรู้ด้านสุขภาพ เรื่องเหล้า — พักตับ ยืดชีวิต</title>
 <meta property="og:title" content="ร่วมตอบแบบสอบถาม “พักตับ ยืดชีวิต”">
-<meta property="og:description" content="แบบสอบถามความรอบรู้ด้านสุขภาพ เรื่องเหล้า ใช้เวลา 7–10 นาที ไม่เก็บชื่อ–นามสกุล">
+<meta property="og:description" content="แบบสอบถามความรอบรู้ด้านสุขภาพ เรื่องเหล้า ใช้เวลา 5–7 นาที ไม่เก็บชื่อ–นามสกุล">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
 <style>body{margin:0;background:#f6f7f9}.links{text-align:center;font:14px 'Sarabun',sans-serif;padding:8px 0 20px}.links{color:#94a3b8}.links .staff{display:inline-block;margin-top:8px;color:#1f3c88;text-decoration:none;border:1px solid #c9d6f2;border-radius:999px;padding:4px 12px;font-size:13px;background:#fff}</style>
@@ -87,20 +87,13 @@
   .fp .msg .acts{display:flex;gap:8px;margin-top:16px}.fp .msg .acts button{flex:1}
   .fp .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:#191919;color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;display:none;max-width:90%;z-index:70}
   .fp .toast.on{display:block}
-  .fp .q.skip{display:none}
-  .fp .sdinfo{font-size:13.5px;background:#fff8e8;border:1px solid #ffe0a3;border-radius:10px;padding:10px 12px;margin:4px 0 8px;color:#5a4300}
-  .fp .sdinfo b{color:#b35f00}
-  .fp .skipnote{display:none;font-size:13.5px;color:var(--fink2);background:#f3f6fb;border-radius:8px;padding:8px 12px;margin:8px 0}
-  .fp .skipnote.on{display:block}
-  .fp .au{margin-top:12px;padding:12px;border-radius:12px;text-align:left;font-size:14px}
-  .fp .au b.g{display:block;font-size:16px;margin-bottom:2px}
   @media (max-width:420px){.fp .opts span{font-size:13px}.fp .checks{grid-template-columns:1fr}}
 </style>
 
 <div class="fp-overlay" id="fpOverlay"></div>
 <div class="fp" id="fp">
   <div class="fp-head">
-    <h1><span class="staff-only">บันทึกแบบสำรวจ A13</span><span class="pub-only">แบบสอบถามความรอบรู้ด้านสุขภาพ เรื่องเหล้า</span><p>โครงการ “พักตับ ยืดชีวิต” · สำหรับประชาชนอายุ 15 ปีขึ้นไป · ใช้เวลาประมาณ 7–10 นาที</p></h1>
+    <h1><span class="staff-only">บันทึกแบบสำรวจ A13</span><span class="pub-only">แบบสอบถามความรอบรู้ด้านสุขภาพ เรื่องเหล้า</span><p>โครงการ “พักตับ ยืดชีวิต” · สำหรับประชาชนอายุ 15 ปีขึ้นไป · ใช้เวลาประมาณ 5–7 นาที</p></h1>
     <button class="fp-x" id="fpClose" aria-label="ปิด">✕</button>
   </div>
   <div class="fp-scroll" id="fpScroll">
@@ -199,13 +192,6 @@
         <div class="q" data-req="orgType"><div class="t"><span class="no">33.</span>ประเภทหน่วยงานที่ผู้ตอบสังกัด</div>
           <select id="fpO_orgType"><option value="">— เลือก —</option></select></div>
       </section>
-
-      <section class="card" id="fpSecAudit">
-        <h2>ตอนที่ 4 แบบประเมินปัญหาการดื่มสุรา (AUDIT)</h2>
-        <p class="sub">กรุณาตอบตามความเป็นจริง คำตอบของท่านเป็นความลับ ไม่มีถูกหรือผิด</p>
-        <div class="sdinfo"><b>1 ดื่มมาตรฐาน</b> = แอลกอฮอล์บริสุทธิ์ 10 กรัม เท่ากับประมาณ เบียร์ 5% 250 มล. (ขวดใหญ่ 620 มล. ≈ 2.5 ดื่มมาตรฐาน) · ไวน์ 12% 100 มล. · เหล้า 40% 30 มล. (1 เป๊ก)</div>
-        <div id="fpAudit"></div>
-      </section>
     </main>
     <div class="submit"><button class="btn-p" id="fpSubmit">ส่งแบบสำรวจ</button></div>
   </div>
@@ -217,7 +203,6 @@
     <div class="pub-only" style="font-size:14px;color:var(--fink2);margin-top:10px">คะแนนความรอบรู้ของท่าน</div>
     <div class="big" id="fpOkPct"></div>
     <div class="lv" id="fpOkLv"></div>
-    <div class="au" id="fpOkAu"></div>
     <div class="staff-only" style="margin-top:12px;font-size:15px">พื้นที่นี้ส่งแล้ว <b id="fpOkCount"></b></div>
     <div class="pub-only" style="margin-top:12px;font-size:13.5px;color:var(--fink2)">ร่วม “พักตับ” ลด ละ เลิกเหล้า เพื่อสุขภาพที่ดีของท่านและครอบครัว</div>
     <div class="acts"><button class="btn-g" id="fpDone">ปิด</button><button class="btn-p" id="fpNext"><span class="staff-only">กรอกชุดถัดไป</span><span class="pub-only">ตอบใหม่ (ผู้ตอบคนถัดไป)</span></button></div>
@@ -244,8 +229,6 @@ window.FormPanel = (function(){
     const L5=['ใช่มากที่สุด','ใช่','ไม่แน่ใจ','ไม่ใช่','ไม่ใช่มากที่สุด'], V5=[5,4,3,2,1];
     $('fpP11').innerHTML = Q.part11.map((q,i)=>`<div class="q" data-req="${q[0]}"><div class="t"><span class="no">${i+1}.</span>${q[1]}</div><div class="opts">${opts(q[0],L3,V3)}</div></div>`).join('');
     $('fpP12').innerHTML = Q.part12.map((q,i)=>`<div class="q" data-req="${q[0]}"><div class="t"><span class="no">${Q.part11.length+i+1}.</span>${q[1]}</div><div class="opts">${opts(q[0],L5,V5)}</div></div>`).join('');
-    const n0=33;
-    $('fpAudit').innerHTML = Q.audit.map((q,i)=>`<div class="q au-q" data-req="${q[0]}"><div class="t"><span class="no">${n0+i+1}.</span>${q[1]}</div><div class="opts v">${opts(q[0],q[3].map(o=>o[0]),q[3].map(o=>o[1]))}</div></div>`+(i===0?'<div class="skipnote" id="fpAuSkip">ท่านตอบว่าไม่เคยดื่ม — ข้ามข้อ 35–41 ไปตอบข้อ 42–43 ได้เลย</div>':'')).join('');
     ['fpAwareSrc','fpJoinedSrc'].forEach(id=>{ $(id).innerHTML = Q.media.map((m,i)=>`<label><input type="checkbox" value="${i+1}">${m}</label>`).join(''); });
     $('fpO_municipality').innerHTML = opts('municipality',Q.municipality);
     $('fpO_sex').innerHTML = opts('sex',Q.sex);
@@ -260,13 +243,7 @@ window.FormPanel = (function(){
     $('fpBirthY').innerHTML='<option value="">ปี พ.ศ.</option>'+Array.from({length:90},(_,i)=>`<option>${yNow-10-i}</option>`).join('');
   }
 
-  const reqEls = () => [...document.querySelectorAll('#fp [data-req]')].filter(e=>!e.classList.contains('skip'));
-  const reqKeys = () => reqEls().map(e=>e.dataset.req);
-  function auditSkip(){
-    const never=radio('AUDIT1')==='0';
-    document.querySelectorAll('#fpAudit .q').forEach((e,i)=>{ if(i>=1&&i<=7){ e.classList.toggle('skip',never); if(never){e.classList.remove('err'); e.querySelectorAll('input').forEach(x=>x.checked=false);} } });
-    $('fpAuSkip').classList.toggle('on',never);
-  }
+  const reqKeys = () => [...document.querySelectorAll('#fp [data-req]')].map(e=>e.dataset.req);
   function answered(k){
     if(k==='edu') return !!$('fpO_edu').value;
     if(k==='orgType') return !!$('fpO_orgType').value;
@@ -315,7 +292,6 @@ window.FormPanel = (function(){
 
   function collect(){
     const items={}; Q.part11.concat(Q.part12).forEach(q=>items[q[0]]=radio(q[0]));
-    const audit={}; Q.audit.forEach(q=>{ const v=radio(q[0]); if(v!=='') audit[q[0]]=Number(v); });
     return {
       consent:$('fpConsent').checked, key:cfg.key||'', areaId:$('fpArea').value, surveyCode:$('fpCode').value.trim(), items,
       aware:radio('aware'), awareExample:$('fpAwareEx').value, awareSrc:checks('fpAwareSrc'), awareOther:$('fpAwareOther').value,
@@ -325,7 +301,7 @@ window.FormPanel = (function(){
       birthD:$('fpBirthD').value, birthM:$('fpBirthM').value, birthY:$('fpBirthY').value,
       religion:radio('religion'), religionOther:$('fpReligionOther').value,
       edu:$('fpO_edu').value, eduOther:$('fpEduOther').value, village:$('fpVillage').value.trim(), orgType:$('fpO_orgType').value,
-      moo:$('fpMoo').value, villageName:$('fpVilName').value.trim(), audit
+      moo:$('fpMoo').value, villageName:$('fpVilName').value.trim()
     };
   }
   function validate(){
@@ -333,7 +309,7 @@ window.FormPanel = (function(){
     $('fpSecConsent').classList.remove('err');
     if(!$('fpConsent').checked){$('fpSecConsent').classList.add('err');scrollTo($('fpSecConsent'));toast('กรุณายืนยันความยินยอมก่อนตอบแบบสอบถาม');return false}
     if(!$('fpArea').value){scrollTo($('fpSecArea'));toast('กรุณาเลือกพื้นที่');return false}
-    const miss=reqEls().filter(e=>!answered(e.dataset.req));
+    const miss=[...document.querySelectorAll('#fp [data-req]')].filter(e=>!answered(e.dataset.req));
     miss.forEach(e=>e.classList.add('err'));
     if(miss.length){scrollTo(miss[0]);toast(`ยังไม่ได้ตอบ ${miss.length} ข้อ (ไฮไลต์สีแดง)`);return false}
     return true;
@@ -343,7 +319,7 @@ window.FormPanel = (function(){
     $('fpSecConsent').classList.remove('err');
     ['fpCode','fpAwareEx','fpAwareOther','fpJoinedEx','fpJoinedOther','fpSexOther','fpReligionOther','fpEduOther','fpVillage','fpVilName','fpMoo'].forEach(id=>$(id).value='');
     ['fpBirthD','fpBirthM','fpBirthY','fpO_edu','fpO_orgType'].forEach(id=>$(id).value='');
-    document.querySelectorAll('#fp .cond,#fp .other,#fp .q.err,#fp .q.skip,#fpAuSkip').forEach(e=>e.classList.remove('on','err','skip'));
+    document.querySelectorAll('#fp .cond,#fp .other,#fp .q.err').forEach(e=>e.classList.remove('on','err'));
     vilArea=''; selectArea($('fpArea').value); progress(); $('fpScroll').scrollTop=0; if(cfg.mode==='page') window.scrollTo(0,0);
   }
 
@@ -356,7 +332,6 @@ window.FormPanel = (function(){
       if(t.name==='religion') $('fpReligionOther').classList.toggle('on',t.value==='5');
       if(t.id==='fpO_edu') $('fpEduOther').classList.toggle('on',t.value==='10');
       if(t.id==='fpMoo') suggestVillage();
-      if(t.name==='AUDIT1') auditSkip();
       if(t.closest('#fpAwareSrc')) $('fpAwareOther').classList.toggle('on',checks('fpAwareSrc').includes(10));
       if(t.closest('#fpJoinedSrc')) $('fpJoinedOther').classList.toggle('on',checks('fpJoinedSrc').includes(10));
       const q=t.closest('.q'); if(q&&answered(q.dataset.req)) q.classList.remove('err');
@@ -376,14 +351,6 @@ window.FormPanel = (function(){
           $('fpOkCode').textContent=r.code; $('fpOkPct').textContent=r.pct+'%';
           const lv=$('fpOkLv'); lv.textContent='ความรอบรู้ระดับ'+r.level;
           lv.style.background=r.level==='ดี'?'#e3f6e6':r.level==='พอใช้'?'#fff4d6':'#fde7e7';
-          const AU=[['#e3f6e6','#1f6b33','ดื่มน้อยหรือไม่ดื่ม เสี่ยงต่ำ — รักษาพฤติกรรมนี้ไว้'],
-                    ['#fff4d6','#8a5a00','ควรลดปริมาณและความถี่ในการดื่ม'],
-                    ['#ffe6d5','#a64200','การดื่มเริ่มเป็นอันตรายต่อสุขภาพ ควรปรึกษาบุคลากรสาธารณสุข'],
-                    ['#fde7e7','#a11d1d','ควรพบแพทย์หรือบุคลากรสาธารณสุขเพื่อรับการประเมินและช่วยเหลือ']];
-          const au=$('fpOkAu');
-          if(r.auditGroup!=null){ const c=AU[r.auditGroup]; au.style.display=''; au.style.background=c[0]; au.style.color=c[1];
-            au.innerHTML=`<b class="g">การดื่ม: ${Q.auditGroups[r.auditGroup].replace(/\s*\(.*\)/,'')} (AUDIT ${r.audit} คะแนน)</b>${c[2]}${r.auditGroup>0?'<br>ปรึกษาฟรี <b>สายด่วนเลิกเหล้า 1413</b>':''}`;
-          } else au.style.display='none';
           if(r.count!=null) $('fpOkCount').textContent=`${r.count} / ${r.target} ชุด`;
           $('fpDone').style.display=cfg.mode==='drawer'?'':'none';
           b.textContent=cfg.key?'ส่งแบบสำรวจ':'ส่งแบบสอบถาม';

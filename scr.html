@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>คัดกรอง AUDIT และติดตาม Intervention — พักตับ ยืดชีวิต</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/gas-shim.js"></script>
+<script src="js/questions.js"></script>
+<script src="js/stats.js"></script>
+<style>
+  :root{--navy:#1f3c88;--navy-d:#14296a;--yellow:#ffc727;--orange:#f08a00;--red:#b4321f;--ink:#0f172a;--ink2:#5f6672;--line:#e3e8f0;--bg:#f3f6fb;
+    --g0:#0aac23;--g1:#fbb315;--g2:#f18a59;--g3:#dc3c3d;--surface:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'IBM Plex Sans Thai',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
+  .top{background:var(--navy);color:#fff;border-bottom:4px solid var(--yellow);padding:12px 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .top .lg{width:38px;height:38px;border-radius:10px;background:var(--yellow);color:var(--navy);display:grid;place-items:center;font-weight:800}
+  .top h1{margin:0;font-size:18px;font-weight:700;flex:1;min-width:220px}
+  .top h1 small{display:block;font-size:12.5px;font-weight:400;opacity:.85}
+  .top a,.top button{font:inherit;font-size:14px;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.35);background:transparent;border-radius:999px;padding:6px 14px;cursor:pointer}
+  .top a.o{background:var(--orange);border-color:var(--orange);font-weight:600}
+  .wrap{max-width:1280px;margin:0 auto;padding:16px}
+  .filters{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;gap:10px 14px;flex-wrap:wrap;align-items:end;margin-bottom:14px}
+  .filters label{display:block;font-size:12px;color:var(--ink2);margin:0 0 3px 2px}
+  .filters select,.filters input{font:inherit;font-size:14px;padding:7px 10px;border:1px solid #d6deea;border-radius:9px;background:#f7f9fc;min-width:150px}
+  .filters .sp{flex:1}
+  .btn{font:inherit;font-size:14px;font-weight:600;border:0;border-radius:9px;padding:8px 14px;background:var(--navy);color:#fff;cursor:pointer}
+  .btn.g{background:#fff;color:var(--navy);border:1px solid #c9d6f2}
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;border-top:4px solid var(--c,var(--navy))}
+  .kpi .l{font-size:13px;color:var(--ink2)}
+  .kpi .v{font-size:26px;font-weight:800;line-height:1.2}
+  .kpi .d{font-size:12.5px;color:var(--ink2)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden}
+  .card>.hd{background:var(--cc,var(--navy));color:#fff;padding:10px 16px;font-weight:700;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .card>.hd small{font-weight:400;opacity:.85;margin-left:auto}
+  .card>.bd{padding:14px 16px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .ch{position:relative;height:240px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--ink2);margin-bottom:6px}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  .tw{overflow:auto}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{background:#f2f5fb;color:#334155;font-weight:600;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0}
+  td{padding:8px 10px;border-bottom:1px solid #eef1f6;vertical-align:top}
+  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+  td.c,th.c{text-align:center}
+  tr:hover td{background:#fafcff}
+  .chip{display:inline-block;padding:1px 9px;border-radius:999px;font-size:12.5px;font-weight:600;white-space:nowrap}
+  .g0{background:#e3f6e6;color:#1f6b33}.g1{background:#fff4d6;color:#8a5a00}.g2{background:#ffe6d5;color:#a64200}.g3{background:#fde7e7;color:#a11d1d}
+  .s0{background:#eef1f6;color:#475569}.s1{background:#e5f0ff;color:#1f3c88}.s2{background:#ece5ff;color:#5b2fb0}.s3{background:#e3f6e6;color:#1f6b33}.s4,.s5{background:#f3f3f3;color:#6b7280}
+  .chg{font-weight:700}.chg.dn{color:#1f8a3a}.chg.up{color:#c0392b}
+  .muted{color:var(--ink2);font-size:13px}
+  .tbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+  .tbar label{font-size:14px;display:flex;gap:6px;align-items:center}
+  .sum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+  .sum div{background:#f7f9fc;border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink2)}
+  .sum b{display:block;font-size:20px;color:var(--ink)}
+  .narr{font-size:14.5px;text-indent:2em;margin:10px 0 0}
+  .empty{padding:30px;text-align:center;color:var(--ink2)}
+  .msg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:50;align-items:center;justify-content:center;padding:16px}
+  .msg.on{display:flex}
+  .msg .box{background:#fff;border-radius:16px;max-width:520px;width:100%;max-height:94vh;overflow:auto}
+  .msg .box .hd{background:var(--navy);color:#fff;padding:12px 16px;font-weight:700;border-bottom:4px solid var(--yellow)}
+  .msg .box .bd{padding:14px 16px}
+  .msg label{display:block;font-size:13px;color:var(--ink2);margin:10px 0 4px}
+  .msg select,.msg input,.msg textarea{width:100%;font:inherit;padding:9px 11px;border:1px solid #d6deea;border-radius:9px}
+  .msg .acts{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line)}
+  .hist{font-size:13px;background:#f7f9fc;border-radius:10px;padding:8px 12px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#191919;color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;display:none;z-index:70}
+  .toast.on{display:block}
+  @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.sum{grid-template-columns:repeat(2,1fr)}}
+  @media print{.top a,.top button,.filters,.tbar button,td .btn{display:none!important}.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="lg">พต</div>
+  <h1>คัดกรองการดื่มสุรา (AUDIT) และติดตาม Intervention<small id="who">กำลังโหลด…</small></h1>
+  <a href="dashboard.html">← Dashboard</a>
+  <a class="o" href="audit.html">+ คัดกรองใหม่</a>
+  <button id="logout">ออกจากระบบ</button>
+</div>
+<div class="wrap">
+  <div class="filters">
+    <div id="wProv"><label for="fProv">จังหวัด</label><select id="fProv"><option value="">ทุกจังหวัด</option></select></div>
+    <div id="wArea"><label for="fArea">พื้นที่</label><select id="fArea"><option value="">ทุกพื้นที่</option></select></div>
+    <div><label for="fGrp">กลุ่ม (ผลล่าสุด)</label><select id="fGrp"><option value="">เสี่ยงขึ้นไป (≥ 8)</option><option value="all">ทุกคน</option><option value="0">เสี่ยงต่ำ</option><option value="1">ดื่มแบบเสี่ยง</option><option value="2">ดื่มแบบอันตราย</option><option value="3">น่าจะติดสุรา</option></select></div>
+    <div><label for="fSt">สถานะการดูแล</label><select id="fSt"><option value="">ทุกสถานะ</option></select></div>
+    <div><label for="fText">ค้นหา</label><input id="fText" placeholder="ชื่อ / เบอร์ / หมู่บ้าน"></div>
+    <div class="sp"></div>
+    <button class="btn g" id="reload">รีเฟรช</button>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi" style="--c:var(--navy)"><div class="l">คัดกรองแล้ว</div><div class="v" id="kN">–</div><div class="d" id="kNd"></div></div>
+    <div class="kpi" style="--c:var(--g3)"><div class="l">เสี่ยงขึ้นไป (≥ 8)</div><div class="v" id="kR">–</div><div class="d" id="kRd"></div></div>
+    <div class="kpi" style="--c:var(--orange)"><div class="l">รอดำเนินการ</div><div class="v" id="kW">–</div><div class="d" id="kWd"></div></div>
+    <div class="kpi" style="--c:#5b2fb0"><div class="l">ได้รับการดูแลแล้ว</div><div class="v" id="kC">–</div><div class="d" id="kCd"></div></div>
+    <div class="kpi" style="--c:var(--g0)"><div class="l">คัดกรองซ้ำหลังดูแล</div><div class="v" id="kF">–</div><div class="d" id="kFd"></div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card" style="--cc:var(--red)"><div class="hd">กลุ่มการดื่ม จำแนกภาค / พื้นที่ <small>ผลก่อนการดูแล</small></div><div class="bd">
+      <div class="legend"><span><i style="background:var(--g0)"></i>เสี่ยงต่ำ 0–7</span><span><i style="background:var(--g1)"></i>ดื่มแบบเสี่ยง 8–15</span><span><i style="background:var(--g2)"></i>ดื่มแบบอันตราย 16–19</span><span><i style="background:var(--g3)"></i>น่าจะติดสุรา 20–40</span></div>
+      <div class="ch" id="chWrap"><canvas id="cGrp" role="img" aria-label="สัดส่วนกลุ่มการดื่ม"></canvas></div></div></div>
+    <div class="card" style="--cc:#5b2fb0"><div class="hd">สถานะการดูแล (ผู้ที่ได้ ≥ 8 คะแนน)</div><div class="bd">
+      <div class="tw"><table id="stTab"></table></div>
+      <p class="muted" style="margin:8px 0 0">แนวทาง WHO: 8–15 ให้คำแนะนำแบบสั้น (Brief advice) · 16–19 ให้คำปรึกษาแบบสั้นและติดตาม · 20 ขึ้นไป ส่งต่อเพื่อประเมินและบำบัด</p></div></div>
+  </div>
+
+  <div class="card" style="--cc:var(--navy)" id="secList"><div class="hd">รายชื่อผู้รับการคัดกรอง <small id="listCap"></small></div><div class="bd">
+    <div class="tbar"><button class="btn g" id="csv">ดาวน์โหลด CSV (Excel)</button><button class="btn g" onclick="window.print()">พิมพ์</button>
+      <span class="muted">ข้อมูลส่วนบุคคล — ใช้เพื่อการดูแลเท่านั้น ห้ามเผยแพร่</span></div>
+    <div class="tw"><table><thead><tr><th>#</th><th>ชื่อ–สกุล</th><th>เบอร์โทร</th><th>เพศ/อายุ</th><th>หมู่บ้าน</th><th id="thArea">พื้นที่</th><th class="c">ก่อนดูแล</th><th class="c">หลังดูแล (ล่าสุด)</th><th class="c">เปลี่ยนแปลง</th><th>สถานะการดูแล</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
+  </div></div>
+
+  <div class="card" style="--cc:var(--g0)"><div class="hd">ผลก่อน–หลัง Intervention <small>กลุ่มเสี่ยง (≥ 8) ที่คัดกรองซ้ำแล้ว · ก่อนดูแล เทียบ ครั้งล่าสุด</small></div><div class="bd" id="pp"></div></div>
+</div>
+
+<div class="msg" id="dlg"><div class="box">
+  <div class="hd" id="dTitle">บันทึกการดูแล</div>
+  <div class="bd">
+    <div class="hist" id="dHist"></div>
+    <label for="dSt">สถานะ</label><select id="dSt"></select>
+    <label for="dType">รูปแบบการดูแล</label><input id="dType" list="typeList" maxlength="100"><datalist id="typeList">
+      <option value="ให้คำแนะนำแบบสั้น (Brief advice)"><option value="ให้คำปรึกษาแบบสั้น (Brief counseling)"><option value="สัมภาษณ์เพื่อเสริมสร้างแรงจูงใจ (MI)">
+      <option value="เยี่ยมบ้าน / ติดตามทางโทรศัพท์"><option value="ส่งต่อ รพ.สต. / คลินิกบำบัด"><option value="ส่งต่อโรงพยาบาล"></datalist>
+    <div style="display:flex;gap:10px"><div style="flex:1"><label for="dDate">วันที่ให้การดูแล</label><input id="dDate" type="date"></div>
+      <div style="flex:1"><label for="dStaff">ผู้ดูแล</label><input id="dStaff" maxlength="80"></div></div>
+    <label for="dNote">หมายเหตุ</label><textarea id="dNote" rows="3" maxlength="300"></textarea>
+  </div>
+  <div class="acts"><a class="btn g" id="dRescreen" style="text-decoration:none">คัดกรองซ้ำ</a><span style="flex:1"></span><button class="btn g" id="dCancel">ยกเลิก</button><button class="btn" id="dSave">บันทึก</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const KEY=STAFF_KEY.get(); if(!KEY){ location.replace('login.html?next=scr.html'); return; }
+const G=Q.auditGroups.map(g=>g.replace(/\s*\(.*\)/,'')), ST=Q.intvStatus, SEX=['','ชาย','หญิง','อื่น ๆ'];
+const auG=x=>x>=Q.auditCut[2]?3:x>=Q.auditCut[1]?2:x>=Q.auditCut[0]?1:0;
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nf=n=>Number(n).toLocaleString('th-TH'), pc=(a,b)=>b?(a/b*100).toFixed(1):'0.0', f2=x=>(+x).toFixed(2);
+const toast=t=>{const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),2800)};
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let D=null, chart=null, cur=null;
+$('fSt').innerHTML+=ST.map((s,i)=>`<option value="${i}">${s}</option>`).join('')+'<option value="none">ไม่มีสถานะ (เสี่ยงต่ำ)</option>';
+$('dSt').innerHTML=ST.map(s=>`<option>${s}</option>`).join('');
+
+function load(){
+  google.script.run.withSuccessHandler(j=>{
+    D=typeof j==='string'?JSON.parse(j):j;
+    // ก่อนดูแล = ครั้งแรกที่ได้ ≥ 8 (ถ้าไม่เคยใช้ครั้งแรก) · หลังดูแล = ครั้งล่าสุดที่อยู่หลังจากนั้น
+    D.people.forEach(p=>{let b=p.rounds.findIndex(r=>r[1]>=Q.auditCut[0]);if(b<0)b=0;p.bi=b;p.first=p.rounds[b];p.last=p.rounds[p.rounds.length-1];
+      p.post=p.rounds.length-1>b;p.g0=auG(p.first[1]);p.gL=auG(p.last[1]);
+      p.si=p.st?ST.indexOf(p.st):-1; p.A=D.areas[p.a];});
+    $('who').textContent=D.role==='admin'?'แอดมิน · ทุกพื้นที่':`พื้นที่ ${D.areaId} · ต.${D.areas[0][3]} อ.${D.areas[0][4]} จ.${D.areas[0][5]}`;
+    if(D.role!=='admin'){$('wProv').style.display='none';$('wArea').style.display='none';$('thArea').style.display='none';}
+    else{const ps=[...new Set(D.areas.map(a=>a[5]))].sort((a,b)=>a.localeCompare(b,'th'));
+      $('fProv').innerHTML='<option value="">ทุกจังหวัด</option>'+ps.map(p=>`<option>${p}</option>`).join('');fillArea();}
+    render();
+  }).withFailureHandler(e=>{
+    if(/รหัสผ่าน/.test(e.message||'')){STAFF_KEY.clear();location.replace('login.html?next=scr.html');return}
+    $('tbody').innerHTML=`<tr><td colspan="11" class="empty">โหลดข้อมูลไม่สำเร็จ: ${esc(e.message)}</td></tr>`;
+  }).getScreenList(KEY);
+}
+function fillArea(){const P=$('fProv').value;$('fArea').innerHTML='<option value="">ทุกพื้นที่</option>'+D.areas.map((a,i)=>[a,i]).filter(([a])=>!P||a[5]===P)
+  .map(([a,i])=>`<option value="${i}">${a[0]} ต.${a[3]} อ.${a[4]}${a[2]?' · '+esc(a[2]):''}</option>`).join('');}
+const inScope=p=>{const P=$('fProv').value,A=$('fArea').value;return (!P||p.A[5]===P)&&(A===''||p.a===Number(A));};
+
+function render(){
+  const S=D.people.filter(inScope);
+  // KPI
+  const risk=S.filter(p=>p.g0>=1), wait=risk.filter(p=>p.si<=0), care=risk.filter(p=>p.si>=1&&p.si<=3), fu=risk.filter(p=>p.post);
+  $('kN').textContent=nf(S.length); $('kNd').textContent=`${nf(S.reduce((x,p)=>x+p.rounds.length,0))} ครั้ง`;
+  $('kR').textContent=nf(risk.length); $('kRd').textContent=`ร้อยละ ${pc(risk.length,S.length)} ของผู้คัดกรอง`;
+  $('kW').textContent=nf(wait.length); $('kWd').textContent=`ร้อยละ ${pc(wait.length,risk.length)} ของกลุ่มเสี่ยง`;
+  $('kC').textContent=nf(care.length); $('kCd').textContent=`ร้อยละ ${pc(care.length,risk.length)} ของกลุ่มเสี่ยง`;
+  $('kF').textContent=nf(fu.length); $('kFd').textContent=`ร้อยละ ${pc(fu.length,risk.length)} ของกลุ่มเสี่ยง`;
+  // chart
+  const byArea=D.role!=='admin'||$('fArea').value!==''||$('fProv').value!=='';
+  const key=byArea?(p=>`${p.A[0]} ต.${p.A[3]}`):(p=>p.A[6]);
+  const labs=[...new Set(S.map(key))].sort((a,b)=>a.localeCompare(b,'th'));
+  const sets=['รวม',...labs].map(l=>[l,l==='รวม'?S:S.filter(p=>key(p)===l)]);
+  $('chWrap').style.height=Math.max(200,sets.length*34+50)+'px';
+  const data={labels:sets.map(([l,a])=>`${l} (n=${a.length})`),datasets:[0,1,2,3].map(g=>({label:G[g],data:sets.map(([l,a])=>a.length?+(a.filter(p=>p.g0===g).length/a.length*100).toFixed(1):0),
+    backgroundColor:css('--g'+g),borderColor:'#fff',borderWidth:{left:1,right:1},borderSkipped:false,barThickness:20}))};
+  if(window.Chart){ if(chart) chart.destroy(); chart=new Chart($('cGrp'),{type:'bar',data,options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,animation:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:it=>` ${it.dataset.label}: ${it.raw}%`}}},
+    scales:{x:{stacked:true,max:100,ticks:{callback:v=>v+'%'},grid:{color:'#eef1f6'}},y:{stacked:true,grid:{display:false}}},font:{family:'IBM Plex Sans Thai'}}}); }
+  // สถานะ × กลุ่ม
+  let h='<thead><tr><th>สถานะ</th>'+G.slice(1).map(g=>`<th class="n">${g}</th>`).join('')+'<th class="n">รวม</th></tr></thead><tbody>';
+  ST.forEach((s,i)=>{const row=[1,2,3].map(g=>risk.filter(p=>p.g0===g&&(p.si===i||(i===0&&p.si<0))).length);const t=row.reduce((a,b)=>a+b,0);
+    h+=`<tr><td><span class="chip s${i}">${s}</span></td>${row.map(c=>`<td class="n">${nf(c)}</td>`).join('')}<td class="n"><b>${nf(t)}</b></td></tr>`;});
+  h+=`<tr><td><b>รวม</b></td>${[1,2,3].map(g=>`<td class="n"><b>${nf(risk.filter(p=>p.g0===g).length)}</b></td>`).join('')}<td class="n"><b>${nf(risk.length)}</b></td></tr></tbody>`;
+  $('stTab').innerHTML=h;
+  renderList(S); renderPP(S);
+}
+
+function filtered(S){
+  const g=$('fGrp').value, st=$('fSt').value, t=$('fText').value.trim();
+  return S.filter(p=>(g===''?p.g0>=1||p.si>=0:g==='all'?true:p.gL===Number(g))
+    &&(st===''||(st==='none'?p.si<0&&p.g0===0:(p.si===Number(st)||(st==='0'&&p.si<0&&p.g0>=1))))
+    &&(!t||(p.name+p.phone+p.vil+'หมู่'+p.moo).includes(t)))
+    .sort((a,b)=>(a.si<=0?0:1)-(b.si<=0?0:1)||b.g0-a.g0||b.first[1]-a.first[1]);
+}
+function renderList(S){
+  const L=filtered(S); window.__L=L;
+  $('listCap').textContent=`${nf(L.length)} คน`;
+  if(!L.length){$('tbody').innerHTML='<tr><td colspan="11" class="empty">ไม่มีรายชื่อตามเงื่อนไข</td></tr>';return}
+  $('tbody').innerHTML=L.map((p,i)=>{const d=p.last[1]-p.first[1], si=p.si<0?(p.g0>=1?0:-1):p.si;
+    return `<tr><td class="n">${i+1}</td><td><b>${esc(p.name)}</b>${p.contact?'':' <span class="chip s4" title="ไม่ยินยอมให้ติดต่อ">ไม่ให้ติดต่อ</span>'}</td>
+    <td><a href="tel:${esc(p.phone)}">${esc(p.phone.replace(/^(\d{3})(\d{3})(\d+)$/,'$1-$2-$3'))}</a></td>
+    <td>${SEX[p.sex]||''} ${p.age||''}</td><td>${p.moo?'ม.'+p.moo+' ':''}${esc(p.vil)}</td>
+    <td style="${D.role!=='admin'?'display:none':''}">${p.A[0]}</td>
+    <td class="c"><span class="chip g${p.g0}">${p.first[1]}</span><div class="muted">${p.first[0].slice(5)}</div></td>
+    <td class="c">${p.post?`<span class="chip g${p.gL}">${p.last[1]}</span><div class="muted">${p.last[0].slice(5)} · ครั้งที่ ${p.rounds.length}</div>`:'<span class="muted">–</span>'}</td>
+    <td class="c">${p.post?`<span class="chg ${d<0?'dn':d>0?'up':''}">${d>0?'▲ +':d<0?'▼ ':''}${d}</span>`:''}</td>
+    <td>${si>=0?`<span class="chip s${si}">${ST[si]}</span>${p.type?`<div class="muted">${esc(p.type)}${p.date?' · '+esc(p.date):''}</div>`:''}`:'<span class="muted">–</span>'}</td>
+    <td><button class="btn g" style="padding:4px 10px;font-size:13px" data-pid="${esc(p.pid)}">บันทึกการดูแล</button></td></tr>`;}).join('');
+}
+
+function renderPP(S){
+  const F=S.filter(p=>p.post&&p.g0>=1), n=F.length;
+  if(n<1){$('pp').innerHTML='<div class="empty">ยังไม่มีกลุ่มเสี่ยงที่คัดกรองซ้ำ — หลังให้การดูแลแล้ว ให้กดปุ่ม “บันทึกการดูแล” → “คัดกรองซ้ำ” หรือคัดกรองด้วยเบอร์โทรเดิมในพื้นที่เดิม ระบบจะนับเป็นครั้งที่ 2 อัตโนมัติ</div>';return}
+  const b=F.map(p=>p.first[1]), a=F.map(p=>p.last[1]), d=F.map(p=>p.last[1]-p.first[1]);
+  const md=STAT.mean(d), sdd=n>1?STAT.sd(d):0, t=sdd>0?md/(sdd/Math.sqrt(n)):0, p=n>1&&sdd>0?STAT.pT(t,n-1):null;
+  const down=F.filter(p=>p.gL<p.g0).length, same=F.filter(p=>p.gL===p.g0).length, up=F.filter(p=>p.gL>p.g0).length;
+  const rb=F.filter(p=>p.gL===0).length, rc=0; // ทุกคนใน F เริ่มที่ ≥ 8
+  const pf=x=>x==null?'–':x<.001?'< .001':x.toFixed(3);
+  let h=`<div class="sum"><div>คัดกรองซ้ำ<b>${nf(n)} คน</b></div><div>คะแนนเฉลี่ยก่อนดูแล<b>${f2(STAT.mean(b))}</b>SD ${f2(n>1?STAT.sd(b):0)}</div>
+    <div>คะแนนเฉลี่ยครั้งล่าสุด<b>${f2(STAT.mean(a))}</b>SD ${f2(n>1?STAT.sd(a):0)}</div><div>ลดกลุ่มความเสี่ยงได้<b>${pc(down,n)}%</b>${nf(down)} คน</div></div>`;
+  h+='<div class="grid2"><div><div class="muted" style="margin-bottom:4px">ตารางเปลี่ยนกลุ่ม (แถว = ก่อนดูแล, คอลัมน์ = ครั้งล่าสุด)</div><div class="tw"><table><thead><tr><th>ก่อน \\ หลัง</th>'+G.map(g=>`<th class="n">${g}</th>`).join('')+'<th class="n">รวม</th></tr></thead><tbody>'
+    +[0,1,2,3].map(g=>{const r=F.filter(p=>p.g0===g);return r.length?`<tr><td><span class="chip g${g}">${G[g]}</span></td>${[0,1,2,3].map(k=>{const c=r.filter(p=>p.gL===k).length;return `<td class="n" style="${k<g&&c?'color:#1f8a3a;font-weight:700':k>g&&c?'color:#c0392b;font-weight:700':''}">${c?nf(c):'·'}</td>`}).join('')}<td class="n"><b>${nf(r.length)}</b></td></tr>`:''}).join('')+'</tbody></table></div></div>';
+  h+=`<div><div class="muted" style="margin-bottom:4px">สถิติทดสอบ</div><div class="tw"><table><tbody>
+    <tr><td>ผลต่างคะแนนเฉลี่ย (หลัง − ก่อน)</td><td class="n">${f2(md)} (SD ${f2(sdd)})</td></tr>
+    <tr><td>Paired t-test</td><td class="n">t(${n-1}) = ${f2(t)}, p ${p==null?'–':p<.001?'< .001':'= '+p.toFixed(3)}</td></tr>
+    <tr><td>กลับมาอยู่กลุ่มเสี่ยงต่ำ (&lt; 8)</td><td class="n">${nf(rb)} คน (ร้อยละ ${pc(rb,n)})</td></tr>
+    <tr><td>ลดกลุ่ม / คงเดิม / เพิ่มกลุ่ม</td><td class="n">${nf(down)} / ${nf(same)} / ${nf(up)}</td></tr></tbody></table></div></div></div>`;
+  const sig=p!=null&&p<.05;
+  h+=`<p class="narr">กลุ่มเสี่ยงที่ได้รับการคัดกรองซ้ำ ${nf(n)} คน มีคะแนน AUDIT เฉลี่ยก่อนการดูแล ${f2(STAT.mean(b))} คะแนน และครั้งล่าสุด ${f2(STAT.mean(a))} คะแนน `
+    +(sig?`คะแนน${md<0?'ลดลง':'เพิ่มขึ้น'}อย่างมีนัยสำคัญทางสถิติที่ระดับ .05 (t = ${f2(t)}, df = ${n-1}, p ${p<.001?'< .001':'= '+p.toFixed(3)})`:`ซึ่งไม่แตกต่างกันอย่างมีนัยสำคัญทางสถิติที่ระดับ .05${p!=null?` (t = ${f2(t)}, df = ${n-1}, p = ${p.toFixed(3)})`:''}`)
+    +` ผู้รับการคัดกรองลดกลุ่มความเสี่ยงได้ ร้อยละ ${pc(down,n)} และกลับมาอยู่กลุ่มเสี่ยงต่ำ ${nf(rb)} คน (ร้อยละ ${pc(rb,n)})</p>`;
+  if(n<10) h+='<p class="muted">หมายเหตุ: จำนวนผู้คัดกรองซ้ำยังน้อย ควรแปลผลสถิติด้วยความระมัดระวัง</p>';
+  $('pp').innerHTML=h;
+}
+
+// ----- บันทึกการดูแล -----
+$('tbody').addEventListener('click',e=>{const b=e.target.closest('[data-pid]');if(!b)return;
+  cur=D.people.find(p=>p.pid===b.dataset.pid); if(!cur) return;
+  $('dTitle').textContent='บันทึกการดูแล · '+cur.name;
+  $('dHist').innerHTML=`📞 <a href="tel:${esc(cur.phone)}">${esc(cur.phone)}</a> · ${SEX[cur.sex]||''} ${cur.age} ปี · ${cur.moo?'ม.'+cur.moo+' ':''}${esc(cur.vil)}<br>`
+    +cur.rounds.map((r,i)=>`ครั้งที่ ${i+1} (${r[0]}): <b>${r[1]}</b> คะแนน <span class="chip g${auG(r[1])}">${G[auG(r[1])]}</span>`).join('<br>');
+  $('dSt').value=cur.st||ST[0]; $('dType').value=cur.type||''; $('dDate').value=cur.date||D.today; $('dStaff').value=cur.staff||''; $('dNote').value=cur.note||'';
+  $('dRescreen').href='audit.html?area='+cur.A[0];
+  $('dlg').classList.add('on');});
+$('dCancel').onclick=()=>$('dlg').classList.remove('on');
+$('dSave').onclick=()=>{const b=$('dSave');b.disabled=true;b.textContent='กำลังบันทึก…';
+  const d={status:$('dSt').value,type:$('dType').value.trim(),date:$('dDate').value,staff:$('dStaff').value.trim(),note:$('dNote').value.trim()};
+  google.script.run.withSuccessHandler(()=>{b.disabled=false;b.textContent='บันทึก';Object.assign(cur,{st:d.status,type:d.type,date:d.date,staff:d.staff,note:d.note,si:ST.indexOf(d.status)});
+      $('dlg').classList.remove('on');toast('บันทึกแล้ว');render();})
+    .withFailureHandler(e=>{b.disabled=false;b.textContent='บันทึก';toast('บันทึกไม่สำเร็จ: '+e.message)}).saveIntervention(KEY,cur.pid,d);};
+
+// ----- CSV -----
+$('csv').onclick=()=>{const L=window.__L||[];const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const H=['รหัสพื้นที่','ตำบล','ชื่อ-สกุล','เบอร์โทร','เพศ','อายุ','หมู่ที่','หมู่บ้าน','ยินยอมให้ติดต่อ','จำนวนครั้ง','วันที่ครั้งแรก','คะแนนครั้งแรก','กลุ่มครั้งแรก','วันที่ล่าสุด','คะแนนล่าสุด','กลุ่มล่าสุด','สถานะ','รูปแบบการดูแล','วันที่ดูแล','ผู้ดูแล','หมายเหตุ'];
+  const rows=L.map(p=>[p.A[0],p.A[3],p.name,"'"+p.phone,SEX[p.sex],p.age,p.moo||'',p.vil,p.contact?'ยินยอม':'ไม่ยินยอม',p.rounds.length,p.first[0],p.first[1],G[p.g0],p.last[0],p.last[1],G[p.gL],p.st||'',p.type||'',p.date||'',p.staff||'',p.note||'']);
+  const csv='﻿'+[H,...rows].map(r=>r.map(q).join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='AUDIT_รายชื่อ_'+(D.today||'')+'.csv';document.body.appendChild(a);a.click();a.remove();};
+
+['fGrp','fSt'].forEach(id=>$(id).onchange=render); $('fText').oninput=render;
+$('fProv').onchange=()=>{fillArea();render()}; $('fArea').onchange=render;
+$('reload').onclick=load; $('logout').onclick=()=>{STAFF_KEY.clear();location.href='login.html'};
+load();
+})();
+</script>
+</body>
+</html>

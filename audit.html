@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แบบคัดกรองปัญหาการดื่มสุรา (AUDIT) — พักตับ ยืดชีวิต</title>
+<meta property="og:title" content="แบบคัดกรองปัญหาการดื่มสุรา (AUDIT) “พักตับ ยืดชีวิต”">
+<meta property="og:description" content="10 ข้อ ใช้เวลา 3 นาที ทราบผลทันที พร้อมคำแนะนำ">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="js/config.js"></script>
+<script src="js/gas-shim.js"></script>
+<script src="js/questions.js"></script>
+<style>
+  :root{--navy:#1f3c88;--navy-d:#14296a;--yellow:#ffc727;--orange:#f08a00;--ink:#191919;--ink2:#5f6672;--line:#e3e5e8;--bad:#d03b3b;--soft:#eef3ff}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'IBM Plex Sans Thai',system-ui,sans-serif;background:#f4f6fa;color:var(--ink);font-size:16px;line-height:1.55}
+  header{background:var(--navy);border-bottom:4px solid var(--yellow);color:#fff;padding:14px 16px 12px}
+  header h1{margin:0;font-size:19px;font-weight:700}
+  header p{margin:2px 0 0;font-size:13.5px;opacity:.9}
+  header .tag{display:inline-block;background:var(--orange);color:#fff;font-size:12px;font-weight:600;border-radius:20px;padding:1px 10px;margin-left:6px;vertical-align:2px}
+  .bar{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:8px 16px;display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink2)}
+  .bar .track{flex:1;height:6px;background:#eceef1;border-radius:3px;overflow:hidden}
+  .bar .fill{height:100%;width:0;background:var(--orange);transition:width .2s}
+  main{max-width:720px;margin:0 auto;padding:8px 12px 24px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 6px 20px rgba(15,23,42,.04);padding:16px;margin:12px 0}
+  .card h2{font-size:17px;margin:0 0 4px;font-weight:700;color:var(--navy)}
+  .card .sub{color:var(--ink2);font-size:14px;margin:0 0 10px}
+  .consent{border-left:5px solid var(--yellow)}
+  .consent p{margin:0 0 8px;font-size:14.5px}
+  .consent ul{margin:0 0 10px;padding-left:20px;font-size:14px;color:var(--ink2)}
+  label.ck{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid #dfe5ee;border-radius:10px;background:#fbfcff;cursor:pointer;font-weight:600;margin-top:8px}
+  label.ck.light{font-weight:400}
+  label.ck input{width:20px;height:20px;margin-top:2px;accent-color:var(--navy);flex:none}
+  .err label.ck.req{border-color:var(--bad);background:#fff5f5}
+  label.f{display:block;font-weight:600;margin:12px 0 4px;font-size:15px}
+  select,input[type=text],input[type=tel],input[type=number]{width:100%;font:inherit;color:var(--ink);padding:10px 12px;border:1px solid #cfd3d8;border-radius:8px;background:#fff}
+  .row{display:flex;gap:8px}.row>*{flex:1;min-width:0}
+  .q{padding:12px 0;border-top:1px solid var(--line)}
+  .q:first-child{border-top:0}
+  .q .t{margin-bottom:8px}
+  .q .no{display:inline-block;min-width:26px;margin-right:4px;color:var(--orange);font-weight:700}
+  .q.err .t,.fld.err label.f{color:var(--bad)}
+  .q.err{background:#fff5f5;margin:0 -16px;padding:12px 16px}
+  .fld.err input,.fld.err select{border-color:var(--bad);background:#fff5f5}
+  .q.skip{display:none}
+  .opts{display:flex;flex-wrap:wrap;gap:6px}
+  .opts.v{flex-direction:column}
+  .opts label{flex:1 1 0;min-width:64px;position:relative}
+  .opts input{position:absolute;opacity:0;pointer-events:none}
+  .opts span{display:block;padding:10px 12px;border:1px solid #dfe5ee;border-radius:10px;font-size:14.5px;cursor:pointer;user-select:none;background:#fff}
+  .opts:not(.v) span{text-align:center;padding:9px 4px}
+  .opts input:checked+span{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:600}
+  .opts input:focus-visible+span{outline:2px solid var(--navy);outline-offset:2px}
+  .sd{font-size:13.5px;background:#fff8e8;border:1px solid #ffe0a3;border-radius:10px;padding:10px 12px;margin:4px 0 6px;color:#5a4300}
+  .sd b{color:#b35f00}
+  .skipnote{display:none;font-size:13.5px;color:var(--ink2);background:#f3f6fb;border-radius:8px;padding:8px 12px;margin:8px 0}
+  .skipnote.on{display:block}
+  .locked{display:none;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:var(--soft);font-size:15px}
+  .locked.on{display:flex}.locked b{color:var(--navy)}
+  .staffbar{display:none;background:#fff4d6;border-bottom:1px solid #ffe0a3;padding:6px 16px;font-size:13.5px;color:#6b4b00}
+  .staffbar.on{display:block}
+  .submit{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 16px;display:flex;justify-content:center}
+  button{font:inherit;cursor:pointer}
+  .btn-p{font-weight:700;border:0;border-radius:12px;padding:13px 22px;background:var(--orange);color:#fff;width:100%;max-width:688px}
+  .btn-p:disabled{opacity:.6}
+  .btn-g{font-weight:600;border:1px solid var(--navy);border-radius:10px;padding:12px 18px;background:#fff;color:var(--navy)}
+  .msg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:60;align-items:center;justify-content:center;padding:16px}
+  .msg.on{display:flex}
+  .msg .box{background:#fff;border-radius:16px;padding:22px;max-width:440px;width:100%;text-align:center;max-height:94vh;overflow:auto}
+  .msg .sc{font-size:44px;font-weight:700;line-height:1.1}
+  .msg .grp{display:inline-block;padding:4px 14px;border-radius:20px;font-weight:700;margin:6px 0 10px;font-size:17px}
+  .msg .adv{text-align:left;font-size:14.5px;border-radius:12px;padding:12px 14px}
+  .msg .acts{display:flex;gap:8px;margin-top:16px}.msg .acts button{flex:1}
+  .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:#191919;color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;display:none;max-width:90%;z-index:70}
+  .toast.on{display:block}
+  footer{text-align:center;font-size:13px;color:var(--ink2);padding:6px 0 20px}
+  footer a{color:var(--navy)}
+  .hp{position:absolute;left:-9999px}
+</style>
+</head>
+<body>
+<header>
+  <h1>แบบคัดกรองปัญหาการดื่มสุรา <span class="tag">AUDIT</span></h1>
+  <p>โครงการ “พักตับ ยืดชีวิต” · 10 ข้อ ใช้เวลาประมาณ 3 นาที · ทราบผลทันที</p>
+</header>
+<div class="staffbar" id="staffBar"></div>
+<div class="bar"><span id="progTxt">ตอบแล้ว 0</span><div class="track"><div class="fill" id="progFill"></div></div></div>
+
+<main id="frm">
+  <section class="card consent" id="secConsent">
+    <h2>คำชี้แจงและความยินยอม</h2>
+    <p>แบบคัดกรองนี้ใช้ประเมินความเสี่ยงจากการดื่มเครื่องดื่มแอลกอฮอล์ (AUDIT ขององค์การอนามัยโลก) เพื่อให้คำแนะนำและดูแลสุขภาพที่เหมาะสมกับท่าน</p>
+    <ul>
+      <li>ระบบเก็บชื่อ–สกุลและเบอร์โทร เพื่อให้เจ้าหน้าที่สาธารณสุขในพื้นที่ติดต่อให้คำแนะนำและติดตามผล</li>
+      <li>ข้อมูลส่วนบุคคลเห็นได้เฉพาะเจ้าหน้าที่ผู้รับผิดชอบพื้นที่ของท่าน ไม่เปิดเผยต่อสาธารณะ ผลที่เผยแพร่เป็นภาพรวมเท่านั้น</li>
+      <li>ท่านเลือกที่จะไม่ตอบหรือหยุดตอบได้ทุกเมื่อ</li>
+    </ul>
+    <label class="ck req"><input type="checkbox" id="consent"> ข้าพเจ้าเข้าใจและยินยอมให้ข้อมูลเพื่อการคัดกรองและดูแลสุขภาพ</label>
+    <label class="ck light"><input type="checkbox" id="contact" checked> ยินยอมให้เจ้าหน้าที่ติดต่อกลับเพื่อให้คำแนะนำ</label>
+  </section>
+
+  <section class="card" id="secArea">
+    <h2>พื้นที่</h2>
+    <div class="locked" id="locked">📍 <div><b id="lockedTxt"></b></div></div>
+    <div id="areaPick">
+      <div class="row">
+        <div class="fld" id="fProv"><label class="f" for="prov">จังหวัด</label><select id="prov"><option value="">— เลือกจังหวัด —</option></select></div>
+        <div class="fld" id="fArea"><label class="f" for="area">ตำบล / อำเภอ</label><select id="area" disabled><option value="">— เลือกพื้นที่ —</option></select></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="secPerson">
+    <h2>ข้อมูลผู้รับการคัดกรอง</h2>
+    <div class="fld" id="fName"><label class="f" for="name">ชื่อ–สกุล</label><input type="text" id="name" autocomplete="name" maxlength="80"></div>
+    <div class="fld" id="fPhone"><label class="f" for="phone">เบอร์โทรศัพท์</label><input type="tel" id="phone" inputmode="tel" autocomplete="tel" maxlength="12" placeholder="0812345678"></div>
+    <div class="q" data-req="sex" style="border-top:0;padding-bottom:0"><div class="t" style="font-weight:600">เพศ</div>
+      <div class="opts"><label><input type="radio" name="sex" value="1"><span>ชาย</span></label><label><input type="radio" name="sex" value="2"><span>หญิง</span></label><label><input type="radio" name="sex" value="3"><span>อื่น ๆ</span></label></div></div>
+    <div class="row">
+      <div class="fld" id="fAge"><label class="f" for="age">อายุ (ปี)</label><input type="number" id="age" min="15" max="100" inputmode="numeric"></div>
+      <div class="fld" id="fMoo"><label class="f" for="moo">หมู่ที่</label><select id="moo"></select></div>
+    </div>
+    <div class="fld"><label class="f" for="vil">ชื่อหมู่บ้าน</label><input type="text" id="vil" maxlength="80" list="vilList" placeholder="เช่น บ้านโนนสูง"><datalist id="vilList"></datalist></div>
+    <input type="text" class="hp" id="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+  </section>
+
+  <section class="card" id="secAudit">
+    <h2>แบบประเมิน AUDIT (10 ข้อ)</h2>
+    <p class="sub">กรุณาตอบตามความเป็นจริงในช่วง 1 ปีที่ผ่านมา ไม่มีถูกหรือผิด</p>
+    <div class="sd"><b>1 ดื่มมาตรฐาน</b> = แอลกอฮอล์บริสุทธิ์ 10 กรัม เท่ากับประมาณ เบียร์ 5% 250 มล. (ขวดใหญ่ 620 มล. ≈ 2.5 ดื่มมาตรฐาน) · ไวน์ 12% 100 มล. · เหล้า 40% 30 มล. (1 เป๊ก)</div>
+    <div id="items"></div>
+  </section>
+
+  <footer><a href="./">🏠 หน้าแรก / สถิติ</a> · <a href="login.html?next=audit.html">🔒 สำหรับเจ้าหน้าที่</a></footer>
+</main>
+<div class="submit"><button class="btn-p" id="submit">ส่งแบบคัดกรอง</button></div>
+
+<div class="msg" id="ok"><div class="box">
+  <div style="font-size:14px;color:var(--ink2)">ผลการคัดกรอง · รหัส <b id="okCode"></b> <span id="okRound"></span></div>
+  <div class="sc" id="okScore"></div><div style="font-size:13px;color:var(--ink2)">คะแนน AUDIT (เต็ม 40)</div>
+  <div class="grp" id="okGroup"></div>
+  <div class="adv" id="okAdv"></div>
+  <div class="acts"><button class="btn-g" id="home">หน้าแรก</button><button class="btn-p" id="next">คัดกรองคนถัดไป</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const qs=new URLSearchParams(location.search);
+  const preset=(qs.get('area')||'').replace(/[^A-Za-z0-9]/g,'');
+  let KEY=(window.STAFF_KEY&&STAFF_KEY.get())||'', ROLE=null, AREAS=[], lockId='';
+  const radio=n=>{const e=document.querySelector(`#frm input[name="${n}"]:checked`);return e?e.value:''};
+  const toast=t=>{const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),3500)};
+  const scrollTo=el=>{try{el.scrollIntoView({behavior:'smooth',block:'center'})}catch(e){}};
+  const ADV=[
+    ['#e3f6e6','#1f6b33','เสี่ยงต่ำ','ดื่มน้อยหรือไม่ดื่ม ความเสี่ยงต่ำ — รักษาพฤติกรรมนี้ไว้ ถ้าดื่ม ไม่ควรเกิน 2 ดื่มมาตรฐานต่อวัน และควรมีวันที่ไม่ดื่มในแต่ละสัปดาห์'],
+    ['#fff4d6','#8a5a00','ดื่มแบบเสี่ยง','การดื่มของท่านเริ่มมีความเสี่ยงต่อสุขภาพ ควรลดปริมาณและความถี่ในการดื่ม เจ้าหน้าที่อาจติดต่อเพื่อให้คำแนะนำสั้น ๆ'],
+    ['#ffe6d5','#a64200','ดื่มแบบอันตราย','การดื่มเริ่มเป็นอันตรายต่อสุขภาพและชีวิตประจำวัน ควรรับคำปรึกษาจากบุคลากรสาธารณสุขและติดตามอย่างต่อเนื่อง'],
+    ['#fde7e7','#a11d1d','น่าจะติดสุรา','ควรพบแพทย์หรือบุคลากรสาธารณสุขเพื่อรับการประเมินและบำบัด การหยุดดื่มทันทีอาจมีอาการถอน ควรอยู่ในการดูแลของแพทย์']];
+
+  // ----- สร้างข้อคำถาม -----
+  $('items').innerHTML=Q.audit.map((q,i)=>`<div class="q" data-req="${q[0]}"><div class="t"><span class="no">${i+1}.</span>${q[1]}</div><div class="opts v">${q[3].map(o=>`<label><input type="radio" name="${q[0]}" value="${o[1]}"><span>${o[0]}</span></label>`).join('')}</div></div>`+(i===0?'<div class="skipnote" id="skipNote">ท่านตอบว่าไม่เคยดื่ม — ข้ามไปตอบข้อ 9–10 ได้เลย</div>':'')).join('');
+  $('moo').innerHTML='<option value="">เลือก</option>'+Array.from({length:30},(_,i)=>`<option value="${i+1}">หมู่ ${i+1}</option>`).join('')+'<option value="0">ไม่ทราบ</option>';
+
+  const reqEls=()=>[...document.querySelectorAll('#frm [data-req]')].filter(e=>!e.classList.contains('skip'));
+  const answered=k=>!!radio(k);
+  function progress(){const els=reqEls(),d=els.filter(e=>answered(e.dataset.req)).length;$('progTxt').textContent=`ตอบแล้ว ${d}/${els.length}`;$('progFill').style.width=(d/els.length*100)+'%';}
+  function skip(){const never=radio('AUDIT1')==='0';
+    document.querySelectorAll('#items .q').forEach((e,i)=>{if(i>=1&&i<=7){e.classList.toggle('skip',never);if(never){e.classList.remove('err');e.querySelectorAll('input').forEach(x=>x.checked=false)}}});
+    $('skipNote').classList.toggle('on',never);}
+
+  // ----- พื้นที่ -----
+  function fillProv(){const ps=[...new Set(AREAS.map(a=>a.province))].sort((a,b)=>a.localeCompare(b,'th'));$('prov').innerHTML='<option value="">— เลือกจังหวัด —</option>'+ps.map(p=>`<option>${p}</option>`).join('');}
+  function fillArea(p){const l=AREAS.filter(a=>a.province===p);$('area').disabled=!p;$('area').innerHTML='<option value="">— เลือกพื้นที่ —</option>'+l.map(a=>`<option value="${a.id}">${a.tambon?'ตำบล'+a.tambon+' ':''}อำเภอ${a.amphoe}</option>`).join('');}
+  function lock(id){const a=AREAS.find(x=>x.id===id);if(!a)return;lockId=id;$('locked').classList.add('on');$('areaPick').style.display='none';
+    $('lockedTxt').textContent=`${a.tambon?'ตำบล'+a.tambon+' ':''}อำเภอ${a.amphoe} จังหวัด${a.province}`;loadVil(id);}
+  let VIL=[];
+  function loadVil(id){google.script.run.withSuccessHandler(l=>{VIL=l||[];$('vilList').innerHTML=[...new Set(VIL.map(v=>v[2]))].map(n=>`<option value="${n.replace(/"/g,'&quot;')}">`).join('')}).withFailureHandler(()=>{}).getVillages(id);}
+  const areaId=()=>lockId||$('area').value;
+
+  function loadAreas(){
+    google.script.run.withSuccessHandler(list=>{AREAS=list||[];fillProv();
+      const want=(ROLE&&ROLE.role==='area')?ROLE.areaId:preset;
+      if(want&&AREAS.some(a=>a.id===want)) lock(want);
+    }).withFailureHandler(e=>toast('โหลดรายชื่อพื้นที่ไม่สำเร็จ: '+(e.message||e))).getAreas('');
+  }
+  if(KEY){
+    google.script.run.withSuccessHandler(u=>{
+      if(!u){KEY='';loadAreas();return}
+      ROLE=u; $('staffBar').classList.add('on');
+      $('staffBar').innerHTML=`🔒 โหมดเจ้าหน้าที่ (${u.role==='admin'?'แอดมิน':'พื้นที่ '+u.areaId}) — บันทึกการคัดกรองแทนประชาชน · <a href="scr.html">ดูรายชื่อ / ติดตาม Intervention</a>`;
+      loadAreas();
+    }).withFailureHandler(()=>{KEY='';loadAreas()}).checkKey(KEY);
+  } else loadAreas();
+
+  // ----- ตรวจและส่ง -----
+  function validate(){
+    document.querySelectorAll('#frm .err').forEach(e=>e.classList.remove('err'));
+    if(!$('consent').checked){$('secConsent').classList.add('err');scrollTo($('secConsent'));toast('กรุณายืนยันความยินยอมก่อน');return false}
+    if(!areaId()){$('fArea').classList.add('err');scrollTo($('secArea'));toast('กรุณาเลือกพื้นที่');return false}
+    const bad=[];
+    if($('name').value.trim().length<2) bad.push($('fName'));
+    if(!/^0\d{8,9}$/.test($('phone').value.replace(/\D/g,''))) bad.push($('fPhone'));
+    const age=Number($('age').value); if(!(age>=15&&age<=100)) bad.push($('fAge'));
+    if($('moo').value==='') bad.push($('fMoo'));
+    reqEls().forEach(e=>{if(!answered(e.dataset.req)) bad.push(e)});
+    bad.forEach(e=>e.classList.add('err'));
+    if(bad.length){scrollTo(bad[0]);toast(bad[0]===$('fPhone')?'เบอร์โทรต้องเป็นตัวเลข 9–10 หลัก ขึ้นต้นด้วย 0':bad[0]===$('fAge')?'อายุต้องอยู่ระหว่าง 15–100 ปี':`ยังไม่ครบ ${bad.length} ช่อง (ไฮไลต์สีแดง)`);return false}
+    return true;
+  }
+  function collect(){const audit={};Q.audit.forEach(q=>{const v=radio(q[0]);if(v!=='')audit[q[0]]=Number(v)});
+    return {consent:$('consent').checked,contact:$('contact').checked,key:KEY,areaId:areaId(),name:$('name').value.trim(),phone:$('phone').value,
+      sex:radio('sex'),age:Number($('age').value),moo:$('moo').value,villageName:$('vil').value.trim(),audit};}
+  function reset(){
+    document.querySelectorAll('#frm input[type=radio]').forEach(i=>i.checked=false);
+    ['name','phone','age','vil','moo'].forEach(id=>$(id).value='');
+    document.querySelectorAll('#frm .err,#frm .skip,#skipNote').forEach(e=>e.classList.remove('err','skip','on'));
+    $('contact').checked=true; progress(); window.scrollTo(0,0);
+  }
+  $('frm').addEventListener('change',e=>{const t=e.target;
+    if(t.name==='AUDIT1') skip();
+    if(t.id==='moo'&&!$('vil').value.trim()){const h=VIL.find(v=>v[1]===Number(t.value));if(h)$('vil').value=h[2];}
+    const q=t.closest('.q,.fld'); if(q) q.classList.remove('err');
+    if(t.id==='consent') $('secConsent').classList.remove('err');
+    progress();});
+  $('prov').onchange=e=>fillArea(e.target.value);
+  $('area').onchange=e=>{if(e.target.value) loadVil(e.target.value)};
+  $('submit').onclick=()=>{
+    if($('hp').value) return;
+    if(!validate()) return;
+    const b=$('submit'); b.disabled=true; b.textContent='กำลังส่ง…';
+    google.script.run.withSuccessHandler(r=>{
+      b.disabled=false; b.textContent='ส่งแบบคัดกรอง';
+      const c=ADV[r.group];
+      $('okCode').textContent=r.code;
+      $('okRound').textContent=r.round?`· ครั้งที่ ${r.round}`+(r.prevScore!=null?` (ครั้งก่อน ${r.prevScore} คะแนน)`:''):'';
+      $('okScore').textContent=r.score; $('okScore').style.color=c[1];
+      $('okGroup').textContent=c[2]; $('okGroup').style.background=c[0]; $('okGroup').style.color=c[1];
+      $('okAdv').style.background=c[0]; $('okAdv').style.color=c[1];
+      $('okAdv').innerHTML=c[3]+(r.group>0?'<br><br>📞 ปรึกษาฟรี <b>สายด่วนเลิกเหล้า 1413</b>':'');
+      $('ok').classList.add('on');
+    }).withFailureHandler(err=>{b.disabled=false;b.textContent='ส่งแบบคัดกรอง';toast('ส่งไม่สำเร็จ: '+(err.message||err))}).submitScreening(collect());
+  };
+  $('next').onclick=()=>{$('ok').classList.remove('on');reset()};
+  $('home').onclick=()=>{location.href=KEY?'scr.html':'./'};
+  progress();
+})();
+</script>
+</body>
+</html>
