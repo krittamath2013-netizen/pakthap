@@ -321,6 +321,7 @@
     <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5 5-5"/></symbol>
     <symbol id="i-brain" viewBox="0 0 24 24"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 6 1V5a3 3 0 0 0-3-1zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-6 1"/></symbol>
+    <symbol id="i-glass" viewBox="0 0 24 24"><path d="M7 3h10l-1 9a4 4 0 0 1-8 0zM12 16v5M8 21h8M7.5 8h9"/></symbol>
     <symbol id="i-mega" viewBox="0 0 24 24"><path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1zM17 9a4 4 0 0 1 0 6"/></symbol>
     <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/></symbol>
     <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
@@ -341,6 +342,7 @@
       <a class="it cta" href="form.html"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>ตอบแบบสอบถาม</a>
       <a class="it" data-go="secProgress"><svg viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>สถิติ</a>
       <a class="it" data-go="secHL"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 21h6M10 17h4M12 3v1"/></svg>ความรอบรู้</a>
+      <a class="it" data-go="secAudit"><svg viewBox="0 0 24 24"><path d="M7 3h10l-1 9a4 4 0 0 1-8 0zM12 16v5M8 21h8"/></svg>ปัญหาการดื่ม</a>
       <a class="it" data-go="secMedia"><svg viewBox="0 0 24 24"><path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1zM17 9a4 4 0 0 1 0 6"/></svg>สื่อรณรงค์</a>
       <a class="it" data-go="secDemo"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/></svg>ข้อมูลผู้ตอบ</a>
       <a class="it" data-go="secAbout"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M9 7h6M9 11h6"/></svg>เกี่ยวกับโครงการ</a>
@@ -377,6 +379,7 @@
       <li><a data-go="secAreas" class="sub"><svg class="ic"><use href="#i-table"/></svg>สถานะรายพื้นที่</a></li>
       <li><a data-go="secVillage" class="sub"><svg class="ic"><use href="#i-pin"/></svg>ผลรายหมู่บ้าน</a></li>
       <li><a data-go="secHL" class="sub"><svg class="ic"><use href="#i-brain"/></svg>ความรอบรู้ (HL)</a></li>
+      <li><a data-go="secAudit" class="sub"><svg class="ic"><use href="#i-glass"/></svg>ปัญหาการดื่ม (AUDIT)</a></li>
       <li><a data-go="secMedia" class="sub"><svg class="ic"><use href="#i-mega"/></svg>สื่อ/กิจกรรมรณรงค์</a></li>
       <li><a data-go="secDemo" class="sub"><svg class="ic"><use href="#i-users"/></svg>ข้อมูลผู้ตอบ</a></li>
       <li class="grp">รายงาน</li>
@@ -479,6 +482,15 @@
           <div class="ch sm"><canvas id="cMedia" role="img" aria-label="แผนภูมิแท่งช่องทางสื่อ"></canvas></div></div></section>
     </div>
 
+    <section class="sec card cc-red" id="secAudit" style="margin-bottom:14px"><div class="hd"><svg class="ic"><use href="#i-glass"/></svg>ปัญหาการดื่มสุรา (AUDIT)<span class="sp"></span><small>WHO · คะแนนเต็ม 40</small></div>
+      <div class="bd"><div class="stat2" id="auStat"></div>
+        <div class="legend"><span><i class="sw" style="background:var(--good)"></i>เสี่ยงต่ำ 0–7</span><span><i class="sw" style="background:var(--warning)"></i>ดื่มแบบเสี่ยง 8–15</span><span><i class="sw" style="background:var(--serious)"></i>ดื่มแบบอันตราย 16–19</span><span><i class="sw" style="background:var(--critical)"></i>น่าจะติดสุรา 20–40</span></div>
+        <div class="grid g2" style="margin:0">
+          <div><div class="cap">สัดส่วนกลุ่มการดื่ม จำแนกกลุ่มพื้นที่</div><div class="ch sm"><canvas id="cAudit" role="img" aria-label="แผนภูมิแท่งซ้อนกลุ่ม AUDIT แยกกลุ่มพื้นที่"></canvas></div></div>
+          <div><div class="cap">สัดส่วนกลุ่มการดื่ม จำแนกภาค</div><div class="ch sm"><canvas id="cAuditReg" role="img" aria-label="แผนภูมิแท่งซ้อนกลุ่ม AUDIT แยกภาค"></canvas></div></div>
+        </div>
+        <div class="cap" id="auCap" style="margin-top:6px"></div></div></section>
+
     <div class="card cc-navy" style="margin-bottom:14px"><div class="hd"><svg class="ic"><use href="#i-bars"/></svg>คะแนนเฉลี่ยรายข้อ<span class="sp"></span><small>ร้อยละของคะแนนเต็ม · ข้อ 1–6 เต็ม 3 (ข้อ 5 กลับคะแนนแล้ว) · ข้อ 7–21 เต็ม 5</small></div>
       <div class="bd"><div class="legend"><span><i class="sw" style="background:var(--s1)"></i>ตอน 1.1 (3 ระดับ)</span><span><i class="sw" style="background:var(--s3)"></i>ตอน 1.2 (5 ระดับ)</span></div>
         <div class="ch tall"><canvas id="cItems" role="img" aria-label="แผนภูมิแท่งคะแนนเฉลี่ยรายข้อ"></canvas></div></div></div>
@@ -503,7 +515,7 @@
         <p><b>โครงการสานพลังเครือข่ายหมออนามัยและระบบสุขภาพปฐมภูมิ เพื่อพัฒนาระบบและชุมชนจัดการตนเองในการลดการดื่มเครื่องดื่มแอลกอฮอล์ที่เสี่ยง ด้วยกลยุทธ์ “พักตับ ยืดชีวิต”</b></p>
         <p>สำรวจความรอบรู้ด้านสุขภาพในประเด็นเสี่ยงด้านเหล้า (แบบสำรวจ A13) ของประชาชนในพื้นที่ดำเนินงาน 68 พื้นที่ทั่วประเทศ เพื่อนำผลไปพัฒนากิจกรรมลด ละ เลิกเครื่องดื่มแอลกอฮอล์ในชุมชน</p>
         <div class="grid3">
-          <div><b>ใครตอบได้</b>ประชาชนในพื้นที่ดำเนินงาน อายุ 15 ปีขึ้นไป ใช้เวลา 5–7 นาที</div>
+          <div><b>ใครตอบได้</b>ประชาชนในพื้นที่ดำเนินงาน อายุ 15 ปีขึ้นไป ใช้เวลา 7–10 นาที</div>
           <div><b>ความเป็นส่วนตัว</b>ไม่เก็บชื่อ–นามสกุล หรือเลขบัตรประชาชน นำเสนอผลเป็นภาพรวมเท่านั้น</div>
           <div><b>เจ้าหน้าที่</b>ผู้รับผิดชอบพื้นที่เข้าสู่ระบบด้วยปุ่ม LOGIN เพื่อดูผลและพิมพ์ QR ของพื้นที่</div>
         </div>
@@ -677,6 +689,16 @@ window.Report = (function(){
   const thDate = s => { const [y,m,d]=s.split('-'); const M=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม']; return `${+d} ${M[m-1]} ${+y+543}`; };
 
   /* ---------- เตรียมข้อมูล ---------- */
+  /* AUDIT: r[18] = สตริง 10 ตัว (x = ข้าม), r[19] = คะแนน (-1 = ไม่มี) */
+  const AUG=()=>Q.auditGroups.map(g=>g.replace(/\s*\(.*\)/,''));
+  const auG=x=>x>=Q.auditCut[2]?3:x>=Q.auditCut[1]?2:x>=Q.auditCut[0]?1:0;
+  function auRow(r){
+    const sc=r.length>19?r[19]:-1;
+    if(sc===undefined||sc===null||sc<0) return {au:-1,aug:-1,aui:null};
+    const it=String(r[18]||'').split('').map(c=>c==='x'?null:Number(c));
+    const sum=(a,b)=>it.slice(a,b).reduce((x,v)=>x+(v||0),0);
+    return {au:sc,aug:auG(sc),aui:it,auC:sum(0,3),auD:sum(3,6),auH:sum(6,10)};
+  }
   function rows(raw){
     const rev=Q.part11.map(q=>raw.settings.reverse.includes(q[0])), s=raw.settings;
     return raw.resp.map(r=>{
@@ -686,7 +708,7 @@ window.Report = (function(){
       return {ai:r[0],id:A[0],group:A[1],name:A[2],tambon:A[4],amphoe:A[5],prov:A[6],region:A[7],d:r[1],
         i3,i3raw,i5,s11,s12,m11:s11/i3.length,m12:s12/i5.length,pct,lv:pct>=s.good?0:pct>=s.fair?1:2,
         sex:r[4],ageG:r[5],rel:r[6],edu:r[7],mun:r[8],org:r[9],aw:r[10],aws:r[11],jn:r[12],jns:r[13],age:r.length>14?r[14]:-1,
-        tamR:r[15]||'',moo:r[16]||0,vil:r[17]||''};
+        tamR:r[15]||'',moo:r[16]||0,vil:r[17]||'',...auRow(r)};
     });
   }
 
@@ -726,6 +748,7 @@ window.Report = (function(){
     cat('ประเภทหน่วยงานที่สังกัด',Q.orgType,r=>r.org);
     cat('การรู้จักสื่อ/กิจกรรมรณรงค์',['ทราบ','ไม่ทราบ'],r=>r.aw);
     cat('การเคยเข้าร่วมกิจกรรมรณรงค์',['เคย','ไม่เคย'],r=>r.jn);
+    if(L.some(r=>r.aug>=0)) cat('กลุ่มการดื่ม (AUDIT)',AUG(),r=>r.aug+1);
     if(level!=='area'){
       const gs=[...new Set(L.map(r=>r.group))]; if(gs.length>1) F.push(['กลุ่มพื้นที่',['เดิม','ใหม่'].map(g=>['พื้นที่'+g,r=>r.group===g])]);
     }
@@ -849,8 +872,73 @@ window.Report = (function(){
     h+=`<p class="narr">จากตารางที่ ${T} ผู้ตอบรู้จักสื่อหรือกิจกรรมรณรงค์เกี่ยวกับเหล้า ร้อยละ ${pc(aw.length,n)}${aw.length?` โดยช่องทางที่ทราบมากที่สุดคือ ${esc(topSrc[0])} ร้อยละ ${pc(topSrc[1],aw.length)}`:''} และเคยเข้าร่วมกิจกรรมรณรงค์ ร้อยละ ${pc(jn.length,n)}</p>`;
     SUM.push(`รู้จักสื่อ/กิจกรรมรณรงค์ ร้อยละ ${pc(aw.length,n)} แต่เคยเข้าร่วมกิจกรรมเพียงร้อยละ ${pc(jn.length,n)}`);
 
+
+    /* ===== ส่วนที่ 4 AUDIT ===== */
+    const LA=L.filter(r=>r.aug>=0), na=LA.length;
+    h+='<h3>ส่วนที่ 4 ปัญหาการดื่มสุรา (AUDIT)</h3>';
+    if(!na){ h+='<p class="narr">ยังไม่มีข้อมูลแบบประเมินปัญหาการดื่มสุรา (AUDIT) ในขอบเขตนี้</p>'; }
+    else {
+      const missA=n-na;
+      // 4.1 รายข้อ
+      h+=tcap('ค่าเฉลี่ยและส่วนเบี่ยงเบนมาตรฐานของคะแนนแบบประเมินปัญหาการดื่มสุรา (AUDIT) รายข้อและรายด้าน',`(n = ${nf(na)})`);
+      h+='<div class="tw"><table class="rt"><thead><tr><th style="width:38px">ข้อ</th><th>ข้อคำถาม</th><th style="width:70px">ผู้ตอบ (คน)</th><th style="width:90px">ได้ > 0 คะแนน<br>จำนวน (ร้อยละ)</th><th style="width:56px">x̄</th><th style="width:56px">SD</th></tr></thead><tbody>';
+      const dom=[['ด้านปริมาณและความถี่ในการดื่ม (ข้อ 1–3, เต็ม 12)',0,3,'auC'],['ด้านอาการติดสุรา (ข้อ 4–6, เต็ม 12)',3,6,'auD'],['ด้านปัญหาจากการดื่ม (ข้อ 7–10, เต็ม 16)',6,10,'auH']];
+      dom.forEach(([name,a,b,key])=>{
+        h+=`<tr class="grp"><td colspan="6">${name}</td></tr>`;
+        for(let k=a;k<b;k++){ const v=LA.map(r=>r.aui[k]===null?0:r.aui[k]), ans=LA.filter(r=>r.aui[k]!==null).length, pos=v.filter(x=>x>0).length;
+          h+=`<tr><td class="c">${k+1}</td><td>${esc(Q.audit[k][1])}</td><td class="n">${nf(ans)}</td><td class="c">${nf(pos)} (${pc(pos,na)})</td><td class="n">${f2(STAT.mean(v))}</td><td class="n">${f2(STAT.sd(v))}</td></tr>`; }
+        const d=LA.map(r=>r[key]); h+=`<tr class="tot"><td colspan="4" style="text-align:center">รวม${name.replace(/\s*\(.*\)/,'')}</td><td class="n">${f2(STAT.mean(d))}</td><td class="n">${f2(STAT.sd(d))}</td></tr>`;
+      });
+      h+='</tbody></table></div>';
+      const nev=LA.filter(r=>r.aui[0]===0).length;
+      h+=`<div class="note">ข้อ 1 ตอบ “ไม่เคยดื่มเลย” (${nf(nev)} คน) ข้ามข้อ 2–8 และคิดเป็น 0 คะแนน · ร้อยละคิดจากผู้ตอบ AUDIT ทั้งหมด${missA?` · ไม่รวม ${nf(missA)} คนที่ส่งก่อนเพิ่มแบบประเมิน AUDIT`:''}</div>`;
+      const dm=dom.map(([name,a,b,key])=>[name.replace(/\s*\(.*\)/,''),STAT.mean(LA.map(r=>r[key]))/((b-a)*4)*100]).sort((x,y)=>y[1]-x[1]);
+      const topI=Q.audit.map((q,k)=>[k,LA.filter(r=>(r.aui[k]||0)>0).length]).filter(x=>x[0]>0).sort((a,b)=>b[1]-a[1])[0];
+      h+=`<p class="narr">จากตารางที่ ${T} ผู้ตอบไม่ได้ดื่มเครื่องดื่มแอลกอฮอล์ในช่วงที่ผ่านมา ร้อยละ ${pc(nev,na)} เมื่อพิจารณารายด้าน ${dm[0][0]}มีคะแนนเฉลี่ยสูงสุด (ร้อยละ ${f1(dm[0][1])} ของคะแนนเต็มด้าน) ส่วน${dm[2][0]}ต่ำสุด (ร้อยละ ${f1(dm[2][1])})`
+        +(topI&&topI[1]?` ข้อที่ผู้ตอบได้คะแนนมากกว่า 0 มากที่สุด (นอกจากข้อ 1) คือ ข้อ ${topI[0]+1} ${esc(Q.audit[topI[0]][2])} ร้อยละ ${pc(topI[1],na)}`:'')+'</p>';
+      // 4.2 กลุ่ม
+      const auS=LA.map(r=>r.au), gN=[0,1,2,3].map(g=>LA.filter(r=>r.aug===g).length), CR=['0–7','8–15','16–19','20–40'], ADV=['ให้ความรู้','ให้คำแนะนำแบบสั้น (Brief advice)','ให้คำปรึกษาแบบสั้นและติดตามต่อเนื่อง','ส่งต่อเพื่อประเมินและบำบัด'];
+      h+=tcap('จำนวนและร้อยละของผู้ตอบ จำแนกตามกลุ่มการดื่มสุรา (AUDIT)',`(n = ${nf(na)})`);
+      h+=`<div class="tw"><table class="rt"><thead><tr><th>กลุ่มการดื่ม</th><th style="width:90px">คะแนน</th><th style="width:100px">จำนวน (คน)</th><th style="width:80px">ร้อยละ</th><th>แนวทางดูแล (WHO)</th></tr></thead><tbody>`
+        +AUG().map((g,k)=>`<tr><td>${g}</td><td class="c">${CR[k]}</td><td class="n">${nf(gN[k])}</td><td class="n">${pc(gN[k],na)}</td><td>${ADV[k]}</td></tr>`).join('')
+        +`<tr class="tot"><td colspan="5">คะแนน AUDIT x̄ = ${f2(STAT.mean(auS))}, SD = ${f2(STAT.sd(auS))}, มัธยฐาน = ${f1(quant(auS,.5))}, ต่ำสุด = ${Math.min(...auS)}, สูงสุด = ${Math.max(...auS)} จากคะแนนเต็ม 40</td></tr></tbody></table></div>`;
+      const risk=gN[1]+gN[2]+gN[3];
+      h+=`<p class="narr">จากตารางที่ ${T} ผู้ตอบส่วนใหญ่อยู่ในกลุ่ม${AUG()[gN.indexOf(Math.max(...gN))]} ร้อยละ ${pc(Math.max(...gN),na)} โดยมีผู้ที่ดื่มแบบเสี่ยงขึ้นไป (คะแนน ≥ 8) รวม ${nf(risk)} คน คิดเป็นร้อยละ ${pc(risk,na)} แบ่งเป็นดื่มแบบเสี่ยง ร้อยละ ${pc(gN[1],na)} ดื่มแบบอันตราย ร้อยละ ${pc(gN[2],na)} และน่าจะติดสุรา ร้อยละ ${pc(gN[3],na)} คะแนนเฉลี่ย ${f2(STAT.mean(auS))} คะแนน (SD = ${f2(STAT.sd(auS))})</p>`;
+      SUM.push(`ผลประเมินปัญหาการดื่มสุรา (AUDIT, n = ${nf(na)}): เสี่ยงต่ำ ร้อยละ ${pc(gN[0],na)} ดื่มแบบเสี่ยง ร้อยละ ${pc(gN[1],na)} ดื่มแบบอันตราย ร้อยละ ${pc(gN[2],na)} และน่าจะติดสุรา ร้อยละ ${pc(gN[3],na)}`+(gN[3]?` ผู้ที่น่าจะติดสุรา ${nf(gN[3])} คน ควรได้รับการส่งต่อเพื่อประเมินและบำบัด`:''));
+      // 4.3 หน่วยย่อย
+      const sub2=subUnit(level);
+      if(sub2){
+        const vals=[...new Set(LA.map(sub2.key))].sort((a,b)=>String(a).localeCompare(String(b),'th'));
+        h+=tcap(`กลุ่มการดื่มสุรา (AUDIT) จำแนกตาม${sub2.name}`);
+        h+=`<div class="tw"><table class="rt"><thead><tr><th rowspan="2">${sub2.name}</th><th rowspan="2" style="width:56px">n</th><th rowspan="2" style="width:56px">x̄</th><th colspan="4">กลุ่มการดื่ม จำนวน (ร้อยละ)</th><th rowspan="2" style="width:78px">เสี่ยงขึ้นไป<br>(ร้อยละ)</th></tr><tr>${AUG().map(g=>`<th>${g}</th>`).join('')}</tr></thead><tbody>`;
+        vals.forEach(v=>{const g=LA.filter(r=>sub2.key(r)===v), gn=g.length;
+          h+=`<tr><td>${esc(sub2.label(v,L))}</td><td class="n">${nf(gn)}</td><td class="n">${f1(STAT.mean(g.map(r=>r.au)))}</td>${[0,1,2,3].map(k=>{const c=g.filter(r=>r.aug===k).length;return `<td class="c">${nf(c)} (${pc(c,gn)})</td>`;}).join('')}<td class="n">${pc(g.filter(r=>r.aug>=1).length,gn)}</td></tr>`;});
+        h+=`<tr class="tot"><td>รวม</td><td class="n">${nf(na)}</td><td class="n">${f1(STAT.mean(auS))}</td>${gN.map(c=>`<td class="c">${nf(c)} (${pc(c,na)})</td>`).join('')}<td class="n">${pc(risk,na)}</td></tr></tbody></table></div>`;
+        const rk=vals.map(v=>{const g=LA.filter(r=>sub2.key(r)===v);return [sub2.label(v,L),g.filter(r=>r.aug>=1).length/g.length*100,g.length];}).filter(x=>x[2]>=5).sort((a,b)=>b[1]-a[1]);
+        if(rk.length>1) h+=`<p class="narr">จากตารางที่ ${T} ${sub2.name}ที่มีสัดส่วนผู้ดื่มแบบเสี่ยงขึ้นไปสูงสุดคือ ${esc(rk[0][0])} ร้อยละ ${f1(rk[0][1])} และต่ำสุดคือ ${esc(rk[rk.length-1][0])} ร้อยละ ${f1(rk[rk.length-1][1])} (เฉพาะ${sub2.name}ที่มีผู้ตอบตั้งแต่ 5 คน)</p>`;
+      }
+      // 4.4 ปัจจัยกับการดื่มแบบเสี่ยง
+      const FA=factors(LA,level).filter(f=>f[0]!=='กลุ่มการดื่ม (AUDIT)'), sigA=[];
+      h+=tcap('ความสัมพันธ์ระหว่างปัจจัยกับการดื่มแบบเสี่ยง (AUDIT ≥ 8) (Chi-square test)');
+      h+='<div class="tw"><table class="rt"><thead><tr><th rowspan="2">ปัจจัย / กลุ่ม</th><th colspan="2">จำนวน (ร้อยละ)</th><th rowspan="2" style="width:120px">χ² (df)</th><th rowspan="2" style="width:76px">p-value</th><th rowspan="2" style="width:70px">Cramér’s V</th></tr><tr><th>เสี่ยงต่ำ<br>(0–7)</th><th>เสี่ยงขึ้นไป<br>(≥ 8)</th></tr></thead><tbody>';
+      FA.forEach(([name,gs])=>{
+        const G=gs.map(([l,fn])=>[l,LA.filter(fn)]).filter(g=>g[1].length>0);
+        if(G.length<2) return;
+        const tab=G.map(([l,g])=>[g.filter(r=>r.aug===0).length,g.filter(r=>r.aug>=1).length]);
+        const res=STAT.chisq(tab), flag=res&&res.smallPct>20?'<sup>†</sup>':'';
+        h+=`<tr class="grp"><td>${esc(name)}</td><td></td><td></td><td class="c">${res?`${f2(res.stat)} (${res.df})${flag}`:'ข้อมูลไม่พอ'}</td><td class="c ${res&&res.p<.05?'sig':''}">${res?pfmt(res.p):'–'}</td><td class="c">${res?f2(res.V):'–'}</td></tr>`;
+        G.forEach(([l,g],i)=>{h+=`<tr><td class="ind">${esc(l)}</td>${tab[i].map(c=>`<td class="c">${nf(c)} (${pc(c,g.length)})</td>`).join('')}<td></td><td></td><td></td></tr>`;});
+        if(res&&res.p<.05){const hi=G.map((g,i)=>[g[0],tab[i][1]/g[1].length*100]).sort((a,b)=>b[1]-a[1])[0]; sigA.push({name,res,flag:!!flag,hi});}
+      });
+      h+='</tbody></table></div><div class="note">* p &lt; .05, ** p &lt; .01 · <sup>†</sup> มีเซลล์ที่ค่าคาดหวังน้อยกว่า 5 เกินร้อยละ 20 ควรใช้ Fisher’s exact test · ร้อยละคิดตามแถว</div>';
+      h+=`<p class="narr">จากตารางที่ ${T} `+(sigA.length
+        ? 'ปัจจัยที่มีความสัมพันธ์กับการดื่มแบบเสี่ยงอย่างมีนัยสำคัญทางสถิติที่ระดับ .05 ได้แก่ '+sigA.map(x=>`${x.name} (χ² = ${f2(x.res.stat)}, df = ${x.res.df}, p ${x.res.p<.001?'< .001':'= '+x.res.p.toFixed(3)}, V = ${f2(x.res.V)}) โดยกลุ่ม${x.hi[0]}มีสัดส่วนดื่มแบบเสี่ยงสูงสุด ร้อยละ ${f1(x.hi[1])}${x.flag?' (ควรแปลผลด้วยความระมัดระวัง)':''}`).join(', ')
+        : 'ไม่พบปัจจัยที่มีความสัมพันธ์กับการดื่มแบบเสี่ยงอย่างมีนัยสำคัญทางสถิติที่ระดับ .05')+'</p>';
+      if(sigA.length) SUM.push('ปัจจัยที่สัมพันธ์กับการดื่มแบบเสี่ยง (AUDIT ≥ 8): '+sigA.map(x=>x.name).join(', '));
+    }
+
     /* ===== ตอนที่ 4 เปรียบเทียบ ===== */
-    h+='<h3>ส่วนที่ 4 การเปรียบเทียบคะแนนความรอบรู้ด้านสุขภาพ จำแนกตามปัจจัย</h3>';
+    h+='<h3>ส่วนที่ 5 การเปรียบเทียบคะแนนความรอบรู้ด้านสุขภาพ จำแนกตามปัจจัย</h3>';
     const FS=factors(L,level), sigCmp=[];
     h+=tcap('ผลการเปรียบเทียบค่าเฉลี่ยคะแนนความรอบรู้ (ร้อยละของคะแนนเต็ม) จำแนกตามปัจจัย');
     h+='<div class="tw"><table class="rt"><thead><tr><th>ปัจจัย / กลุ่ม</th><th style="width:60px">n</th><th style="width:64px">x̄</th><th style="width:60px">SD</th><th style="width:130px">สถิติทดสอบ</th><th style="width:80px">p-value</th></tr></thead><tbody>';
@@ -873,7 +961,7 @@ window.Report = (function(){
     if(sigCmp.length) SUM.push('ปัจจัยที่มีคะแนนความรอบรู้แตกต่างกันอย่างมีนัยสำคัญ: '+sigCmp.map(x=>x.name).join(', '));
 
     /* ===== ตอนที่ 5 ความสัมพันธ์ ===== */
-    h+='<h3>ส่วนที่ 5 ปัจจัยที่มีความสัมพันธ์กับระดับความรอบรู้ด้านสุขภาพ</h3>';
+    h+='<h3>ส่วนที่ 6 ปัจจัยที่มีความสัมพันธ์กับระดับความรอบรู้ด้านสุขภาพ</h3>';
     const sigChi=[];
     h+=tcap('ความสัมพันธ์ระหว่างปัจจัยกับระดับความรอบรู้ด้านสุขภาพ (Chi-square test)');
     h+='<div class="tw"><table class="rt"><thead><tr><th rowspan="2">ปัจจัย / กลุ่ม</th><th colspan="3">ระดับความรอบรู้ จำนวน (ร้อยละ)</th><th rowspan="2" style="width:120px">χ² (df)</th><th rowspan="2" style="width:76px">p-value</th><th rowspan="2" style="width:70px">Cramér’s V</th></tr><tr><th>ดี</th><th>พอใช้</th><th>ต้องปรับปรุง</th></tr></thead><tbody>';
@@ -896,6 +984,7 @@ window.Report = (function(){
     const withAge=L.filter(r=>r.age>=0);
     const cr=[['อายุ (ปี) กับคะแนนความรอบรู้รวม',STAT.pearson(withAge.map(r=>r.age),withAge.map(r=>r.pct))],
               ['คะแนนตอนที่ 1.1 กับคะแนนตอนที่ 1.2',STAT.pearson(L.map(r=>r.s11),L.map(r=>r.s12))]];
+    const wAu=L.filter(r=>r.au>=0); if(wAu.length>2) cr.push(['คะแนน AUDIT กับคะแนนความรอบรู้รวม',STAT.pearson(wAu.map(r=>r.au),wAu.map(r=>r.pct))]);
     h+=tcap('ค่าสัมประสิทธิ์สหสัมพันธ์เพียร์สัน (Pearson’s r)');
     h+='<div class="tw"><table class="rt"><thead><tr><th>ตัวแปร</th><th style="width:60px">n</th><th style="width:70px">r</th><th style="width:80px">p-value</th><th style="width:150px">ระดับความสัมพันธ์</th></tr></thead><tbody>';
     const rLv=r=>{const a=Math.abs(r);return (a>=.7?'สูง':a>=.3?'ปานกลาง':a>=.1?'ต่ำ':'ต่ำมาก/ไม่มี')+(r>=0?' (ทางบวก)':' (ทางลบ)');};
@@ -934,6 +1023,15 @@ window.Report = (function(){
     cat(G4,'aw','รู้จักสื่อ/กิจกรรมรณรงค์',['ทราบ','ไม่ทราบ'],r=>r.aw);
     cat(G4,'jn','เคยเข้าร่วมกิจกรรมรณรงค์',['เคย','ไม่เคย'],r=>r.jn);
     Q.media.forEach((m,k)=>cat(G4,'aws'+k,`ทราบผ่าน: ${m} (เฉพาะผู้ที่ทราบ)`,['เลือก','ไม่เลือก'],r=>r.aw===1?((r.aws&(1<<k))?1:2):0));
+    const G6='การดื่มสุรา (AUDIT)', has=r=>r.aug>=0;
+    cat(G6,'aug','กลุ่มการดื่ม AUDIT (4 กลุ่ม)',AUG(),r=>r.aug+1);
+    cat(G6,'aur','การดื่มแบบเสี่ยง (AUDIT ≥ 8)',['เสี่ยงต่ำ (0–7)','เสี่ยงขึ้นไป (≥ 8)'],r=>has(r)?(r.aug>=1?2:1):0);
+    cat(G6,'aud','การดื่มในช่วงที่ผ่านมา (AUDIT ข้อ 1)',['ไม่เคยดื่ม','ดื่ม'],r=>has(r)?(r.aui[0]===0?1:2):0);
+    num(G6,'au','คะแนน AUDIT รวม (เต็ม 40)',r=>has(r)?r.au:null,'คะแนน');
+    num(G6,'auC','AUDIT ด้านปริมาณ/ความถี่ (ข้อ 1–3, เต็ม 12)',r=>has(r)?r.auC:null,'คะแนน');
+    num(G6,'auD','AUDIT ด้านอาการติดสุรา (ข้อ 4–6, เต็ม 12)',r=>has(r)?r.auD:null,'คะแนน');
+    num(G6,'auH','AUDIT ด้านปัญหาจากการดื่ม (ข้อ 7–10, เต็ม 16)',r=>has(r)?r.auH:null,'คะแนน');
+    Q.audit.forEach((q,k)=>cat(G6,'au'+(k+1),`AUDIT ข้อ ${k+1} ${q[2]}`,q[3].map(o=>o[0]),r=>{ if(!has(r)||r.aui[k]===null) return 0; return q[3].findIndex(o=>o[1]===r.aui[k])+1; }));
     const dyn=(key,label,val,lab)=>V.push({g:G5,key,label,type:'cat',dynamic:true,val,lab});
     dyn('group','กลุ่มพื้นที่ (เดิม/ใหม่)',r=>r.group,v=>'พื้นที่'+v);
     dyn('region','ภาค',r=>r.region,v=>'ภาค'+v);
@@ -1180,7 +1278,7 @@ function compute(){
     const i3=r[2].split('').map((v,k)=>revIdx[k]?4-Number(v):Number(v)), i5=r[3].split('').map(Number);
     const total=i3.reduce((x,y)=>x+y,0)+i5.reduce((x,y)=>x+y,0);
     const pct=total/MAX*100;
-    return {a:r[0],d:r[1],i3,i5,pct,lv:pct>=s.good?0:pct>=s.fair?1:2,sex:r[4],age:r[5],rel:r[6],edu:r[7],mun:r[8],org:r[9],aw:r[10],aws:r[11],jn:r[12],jns:r[13],tam:r[15]||'',moo:r[16]||0,vil:r[17]||''};
+    return {a:r[0],d:r[1],i3,i5,pct,lv:pct>=s.good?0:pct>=s.fair?1:2,sex:r[4],age:r[5],rel:r[6],edu:r[7],mun:r[8],org:r[9],aw:r[10],aws:r[11],jn:r[12],jns:r[13],tam:r[15]||'',moo:r[16]||0,vil:r[17]||'',aus:r[18]||'',au:(r[19]===undefined?-1:r[19]),aug:(r[19]===undefined||r[19]<0)?-1:auG(r[19])};
   });
   resp.forEach(r=>{const a=areas[r.a];a.count++;a.hlSum+=r.pct;if(r.d===today)a.today++;if(r.d>a.last)a.last=r.d;});
 
@@ -1201,8 +1299,9 @@ function compute(){
   VIEW={s,today,sel,resp,frac,hasPlan,MAX};
 }
 
+const auG=x=>x>=Q.auditCut[2]?3:x>=Q.auditCut[1]?2:x>=Q.auditCut[0]?1:0;
 /* ---------- render ---------- */
-function render(){ compute(); renderKPI(); renderDonut(); renderPlan(); renderProv(); renderTrend(); renderChips(); renderTable(); renderVillage(); renderHL(); renderMedia(); renderItems(); renderDemo(); }
+function render(){ compute(); renderKPI(); renderDonut(); renderPlan(); renderProv(); renderTrend(); renderChips(); renderTable(); renderVillage(); renderHL(); renderAudit(); renderMedia(); renderItems(); renderDemo(); }
 
 function setKPI(id,v,d){const e=$(id);e.querySelector('.v').innerHTML=v;e.querySelector('.d').innerHTML=d||'';}
 function renderKPI(){
@@ -1393,6 +1492,29 @@ function renderHL(){
   $('hlStat').innerHTML=n?`<div>คะแนนรวมเฉลี่ย<b>${(m(r=>r.pct)*VIEW.MAX/100).toFixed(1)} / ${VIEW.MAX}</b></div>
     <div>ตอน 1.1 (เต็ม ${Q.part11.length*3})<b>${m(r=>r.i3.reduce((a,b)=>a+b,0)).toFixed(1)}</b></div>
     <div>ตอน 1.2 (เต็ม ${Q.part12.length*5})<b>${m(r=>r.i5.reduce((a,b)=>a+b,0)).toFixed(1)}</b></div>`:'<div>ยังไม่มีข้อมูล</div>';
+}
+
+function renderAudit(){
+  const {resp}=VIEW, R=resp.filter(r=>r.aug>=0), n=R.length;
+  const cols=['--good','--warning','--serious','--critical'], names=Q.auditGroups.map(g=>g.replace(/\s*\(.*\)/,''));
+  const sc=css('--surface');
+  const stack=(id,groups)=>{
+    const pc=(arr,l)=>arr.length?+(arr.filter(r=>r.aug===l).length/arr.length*100).toFixed(1):0;
+    const ds=[0,1,2,3].map(l=>({label:names[l],data:groups.map(g=>pc(g[1],l)),backgroundColor:css(cols[l]),borderColor:sc,borderWidth:{left:1,right:1},borderSkipped:false,barThickness:22}));
+    upsert(id,{type:'bar',data:{labels:groups.map(g=>`${g[0]} (n=${fmt(g[1].length)})`),datasets:ds},options:baseOpts({indexAxis:'y',
+      plugins:{legend:{display:false},tooltip:Object.assign(baseOpts().plugins.tooltip,{callbacks:{label:it=>` ${it.dataset.label}: ${it.raw}%`}})},
+      scales:{x:{stacked:true,max:100,grid:{color:css('--line')},border:{display:false},ticks:{callback:v=>v+'%'}},y:{stacked:true,grid:{display:false},border:{display:false}}}})});
+  };
+  stack('cAudit',[['รวม',R],['พื้นที่เดิม',R.filter(r=>RAW.areas[r.a][1]==='เดิม')],['พื้นที่ใหม่',R.filter(r=>RAW.areas[r.a][1]==='ใหม่')]].filter(g=>g[1].length||g[0]==='รวม'));
+  const regs=[...new Set(R.map(r=>RAW.areas[r.a][7]))].filter(Boolean).sort((a,b)=>a.localeCompare(b,'th'));
+  stack('cAuditReg',regs.map(g=>[g,R.filter(r=>RAW.areas[r.a][7]===g)]));
+  const pct=f=>n?(R.filter(f).length/n*100).toFixed(1):'0.0';
+  const mean=n?R.reduce((x,r)=>x+r.au,0)/n:0, sd=n>1?Math.sqrt(R.reduce((x,r)=>x+(r.au-mean)**2,0)/(n-1)):0;
+  $('auStat').innerHTML=n?`<div>คะแนน AUDIT เฉลี่ย<b>${mean.toFixed(1)} <small style="font-size:12px;font-weight:400">(SD ${sd.toFixed(1)})</small></b></div>
+    <div>ไม่ได้ดื่มในรอบปี<b>${pct(r=>r.aus.charAt(0)==='0')}%</b></div>
+    <div>เสี่ยงขึ้นไป (≥ 8 คะแนน)<b style="color:var(--critical)">${pct(r=>r.aug>=1)}%</b></div>`:'<div>ยังไม่มีข้อมูล AUDIT</div>';
+  const old=resp.length-n;
+  $('auCap').textContent=`ผู้ตอบ AUDIT ${fmt(n)} คน`+(old?` · ไม่รวม ${fmt(old)} ชุดที่ส่งก่อนเพิ่มแบบประเมิน AUDIT`:'')+' · เกณฑ์ WHO: 0–7 เสี่ยงต่ำ, 8–15 ดื่มแบบเสี่ยง, 16–19 ดื่มแบบอันตราย, 20–40 น่าจะติดสุรา';
 }
 
 function renderMedia(){
