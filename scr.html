@@ -73,6 +73,12 @@
   .hist{font-size:13px;background:#f7f9fc;border-radius:10px;padding:8px 12px}
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#191919;color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;display:none;z-index:70}
   .toast.on{display:block}
+  .ana h4{margin:16px 0 6px;font-size:15px;color:#0b7a75}
+  .ana h4:first-child{margin-top:0}
+  .ana table{margin-bottom:4px}
+  .ana td.grp{background:#f7f9fc;font-weight:600}
+  .ana .note{font-size:12.5px;color:var(--ink2)}
+  .sig{color:#c0392b;font-weight:700}
   @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.sum{grid-template-columns:repeat(2,1fr)}}
   @media print{.top a,.top button,.filters,.tbar button,td .btn{display:none!important}.card{break-inside:avoid}}
 </style>
@@ -118,6 +124,10 @@
       <span class="muted">ข้อมูลส่วนบุคคล — ใช้เพื่อการดูแลเท่านั้น ห้ามเผยแพร่</span></div>
     <div class="tw"><table><thead><tr><th>#</th><th>ชื่อ–สกุล</th><th>เบอร์โทร</th><th>เพศ/อายุ</th><th>หมู่บ้าน</th><th id="thArea">พื้นที่</th><th class="c">ก่อนดูแล</th><th class="c">หลังดูแล (ล่าสุด)</th><th class="c">เปลี่ยนแปลง</th><th>สถานะการดูแล</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
   </div></div>
+
+  <div class="card" style="--cc:#0b7a75" id="secAna"><div class="hd">วิเคราะห์ผลคัดกรอง AUDIT <small>ผลคัดกรองครั้งแรกของแต่ละคน · ตามจังหวัด/พื้นที่ที่เลือกด้านบน · เลือกพื้นที่เดียวจะแยกรายหมู่บ้านให้</small></div><div class="bd">
+    <div class="tbar"><button class="btn g" id="anaCopy">คัดลอกตาราง (วางใน Word)</button><span class="muted">ตารางพร้อมคำบรรยาย ใช้ประกอบรายงานได้</span></div>
+    <div id="ana"></div></div></div>
 
   <div class="card" style="--cc:var(--g0)"><div class="hd">ผลก่อน–หลัง Intervention <small>กลุ่มเสี่ยง (≥ 8) ที่คัดกรองซ้ำแล้ว · ก่อนดูแล เทียบ ครั้งล่าสุด</small></div><div class="bd" id="pp"></div></div>
 </div>
@@ -199,7 +209,7 @@ function render(){
     h+=`<tr><td><span class="chip s${i}">${s}</span></td>${row.map(c=>`<td class="n">${nf(c)}</td>`).join('')}<td class="n"><b>${nf(t)}</b></td></tr>`;});
   h+=`<tr><td><b>รวม</b></td>${[1,2,3].map(g=>`<td class="n"><b>${nf(risk.filter(p=>p.g0===g).length)}</b></td>`).join('')}<td class="n"><b>${nf(risk.length)}</b></td></tr></tbody>`;
   $('stTab').innerHTML=h;
-  renderList(S); renderPP(S);
+  renderList(S); renderPP(S); renderAna(S);
 }
 
 function filtered(S){
@@ -249,6 +259,66 @@ function renderPP(S){
   if(n<10) h+='<p class="muted">หมายเหตุ: จำนวนผู้คัดกรองซ้ำยังน้อย ควรแปลผลสถิติด้วยความระมัดระวัง</p>';
   $('pp').innerHTML=h;
 }
+
+
+// ----- วิเคราะห์ผลคัดกรอง (ครั้งแรกของแต่ละคน) -----
+function renderAna(S){
+  const L=S.map(p=>{const r=p.rounds[0];const it=r[2].split('').map(c=>c==='x'?null:Number(c));
+    return {p,sc:r[1],g:auG(r[1]),it,drink:it[0]>0,sex:p.sex,age:p.age,moo:p.moo,vil:p.vil,A:p.A,
+      dC:it.slice(0,3).reduce((a,v)=>a+(v||0),0),dD:it.slice(3,6).reduce((a,v)=>a+(v||0),0),dH:it.slice(6,10).reduce((a,v)=>a+(v||0),0)};});
+  const n=L.length; if(!n){$('ana').innerHTML='<div class="empty">ยังไม่มีข้อมูล</div>';return}
+  let T=0, h='<div class="ana">'; const cap=t=>`<h4>ตารางที่ ${++T} ${t}</h4>`;
+  const pf=x=>x==null?'–':x<.001?'< .001':x.toFixed(3);
+  // 1 กลุ่มการดื่ม
+  const gN=[0,1,2,3].map(g=>L.filter(r=>r.g===g).length), sc=L.map(r=>r.sc), nev=L.filter(r=>!r.drink).length;
+  const ADV=['ให้ความรู้','ให้คำแนะนำแบบสั้น (Brief advice)','ให้คำปรึกษาแบบสั้นและติดตามต่อเนื่อง','ส่งต่อเพื่อประเมินและบำบัด'],CR=['0–7','8–15','16–19','20–40'];
+  h+=cap(`จำนวนและร้อยละของผู้รับการคัดกรอง จำแนกตามกลุ่มการดื่มสุรา (n = ${nf(n)})`);
+  h+='<div class="tw"><table><thead><tr><th>กลุ่มการดื่ม</th><th class="c">คะแนน</th><th class="n">จำนวน</th><th class="n">ร้อยละ</th><th>แนวทางดูแล (WHO)</th></tr></thead><tbody>'
+    +G.map((g,k)=>`<tr><td><span class="chip g${k}">${g}</span></td><td class="c">${CR[k]}</td><td class="n">${nf(gN[k])}</td><td class="n">${pc(gN[k],n)}</td><td>${ADV[k]}</td></tr>`).join('')
+    +`<tr><td colspan="5" class="grp">คะแนน x̄ = ${f2(STAT.mean(sc))}, SD = ${f2(n>1?STAT.sd(sc):0)}, ต่ำสุด = ${Math.min(...sc)}, สูงสุด = ${Math.max(...sc)} · ไม่เคยดื่มเลย ${nf(nev)} คน (ร้อยละ ${pc(nev,n)})</td></tr></tbody></table></div>`;
+  const risk=gN[1]+gN[2]+gN[3];
+  h+=`<p class="narr">จากตารางที่ ${T} ผู้รับการคัดกรอง ${nf(n)} คน อยู่ในกลุ่มเสี่ยงต่ำ ร้อยละ ${pc(gN[0],n)} ดื่มแบบเสี่ยง ร้อยละ ${pc(gN[1],n)} ดื่มแบบอันตราย ร้อยละ ${pc(gN[2],n)} และน่าจะติดสุรา ร้อยละ ${pc(gN[3],n)} รวมผู้ที่ควรได้รับการดูแล (≥ 8 คะแนน) ${nf(risk)} คน คิดเป็นร้อยละ ${pc(risk,n)} คะแนนเฉลี่ย ${f2(STAT.mean(sc))} คะแนน</p>`;
+  // 2 จำแนกตามปัจจัย + chi-square (เสี่ยงต่ำ vs ≥ 8)
+  const AGE=['15–19 ปี','20–39 ปี','40–59 ปี','60 ปีขึ้นไป'], ag=a=>a<20?0:a<40?1:a<60?2:3;
+  const F=[['เพศ',SEX.slice(1).map((l,k)=>[l,r=>r.sex===k+1])],['กลุ่มอายุ',AGE.map((l,k)=>[l,r=>ag(r.age)===k])]];
+  const ar=[...new Set(L.map(r=>r.A[0]))].sort();
+  const vils=[...new Set(L.map(r=>r.moo))].sort((a,b)=>a-b);
+  if(ar.length===1&&vils.length>1) F.push(['หมู่บ้าน',vils.map(m=>{const nm={};L.filter(r=>r.moo===m&&r.vil).forEach(r=>nm[r.vil]=(nm[r.vil]||0)+1);const b=Object.keys(nm).sort((x,y)=>nm[y]-nm[x])[0];
+    return [m?`หมู่ ${m}${b?' '+b:''}`:'ไม่ระบุหมู่',r=>r.moo===m]})]);
+  if(ar.length>1) F.push(['พื้นที่',ar.map(id=>{const a=D.areas.find(x=>x[0]===id);return [`${id} ต.${a[3]}`,r=>r.A[0]===id]})]);
+  h+=cap('กลุ่มการดื่มสุรา จำแนกตามปัจจัย และความสัมพันธ์กับการดื่มแบบเสี่ยง (≥ 8 คะแนน)');
+  h+='<div class="tw"><table><thead><tr><th>ปัจจัย / กลุ่ม</th><th class="n">n</th><th class="n">x̄</th>'+G.map(g=>`<th class="n">${g}</th>`).join('')+'<th class="n">≥ 8 (ร้อยละ)</th><th class="c">χ² (df)</th><th class="c">p-value</th></tr></thead><tbody>';
+  const sigF=[];
+  F.forEach(([name,gs])=>{const Gs=gs.map(([l,f])=>[l,L.filter(f)]).filter(g=>g[1].length);
+    if(Gs.length<1) return;
+    const res=Gs.length>1?STAT.chisq(Gs.map(([l,a])=>[a.filter(r=>r.g===0).length,a.filter(r=>r.g>=1).length])):null;
+    const flag=res&&res.smallPct>20?'†':'';
+    h+=`<tr><td class="grp" colspan="8">${name}</td><td class="grp c">${res?f2(res.stat)+' ('+res.df+')'+flag:'–'}</td><td class="grp c ${res&&res.p<.05?'sig':''}">${res?pf(res.p):'–'}</td></tr>`;
+    Gs.forEach(([l,a])=>{h+=`<tr><td style="padding-left:22px">${esc(l)}</td><td class="n">${nf(a.length)}</td><td class="n">${f2(STAT.mean(a.map(r=>r.sc)))}</td>${[0,1,2,3].map(g=>{const c=a.filter(r=>r.g===g).length;return `<td class="n">${nf(c)} (${pc(c,a.length)})</td>`}).join('')}<td class="n"><b>${pc(a.filter(r=>r.g>=1).length,a.length)}</b></td><td></td><td></td></tr>`;});
+    if(res&&res.p<.05){const hi=Gs.map(([l,a])=>[l,a.filter(r=>r.g>=1).length/a.length*100]).sort((x,y)=>y[1]-x[1])[0];sigF.push(`${name} (χ² = ${f2(res.stat)}, p ${res.p<.001?'< .001':'= '+res.p.toFixed(3)}) โดยกลุ่ม${hi[0]}มีสัดส่วนดื่มแบบเสี่ยงสูงสุด ร้อยละ ${hi[1].toFixed(1)}`)}
+  });
+  h+='</tbody></table></div><div class="note">ร้อยละคิดตามแถว · Chi-square ทดสอบความสัมพันธ์ระหว่างปัจจัยกับการดื่มแบบเสี่ยง (เสี่ยงต่ำ 0–7 เทียบ ≥ 8) · † มีเซลล์ค่าคาดหวัง &lt; 5 เกินร้อยละ 20 ควรใช้ Fisher’s exact test</div>';
+  h+=`<p class="narr">จากตารางที่ ${T} `+(sigF.length?'ปัจจัยที่มีความสัมพันธ์กับการดื่มแบบเสี่ยงอย่างมีนัยสำคัญทางสถิติที่ระดับ .05 ได้แก่ '+sigF.join(', '):'ไม่พบปัจจัยที่มีความสัมพันธ์กับการดื่มแบบเสี่ยงอย่างมีนัยสำคัญทางสถิติที่ระดับ .05')+'</p>';
+  // 3 รายข้อ / รายด้าน
+  h+=cap(`คะแนน AUDIT รายข้อและรายด้าน (n = ${nf(n)})`);
+  h+='<div class="tw"><table><thead><tr><th class="c">ข้อ</th><th>ข้อคำถาม</th><th class="n">ได้ &gt; 0 คะแนน</th><th class="n">x̄</th><th class="n">SD</th></tr></thead><tbody>';
+  [['ด้านปริมาณและความถี่ในการดื่ม (ข้อ 1–3, เต็ม 12)',0,3,'dC'],['ด้านอาการติดสุรา (ข้อ 4–6, เต็ม 12)',3,6,'dD'],['ด้านปัญหาจากการดื่ม (ข้อ 7–10, เต็ม 16)',6,10,'dH']].forEach(([nm,a,b,k])=>{
+    h+=`<tr><td colspan="5" class="grp">${nm}</td></tr>`;
+    for(let i=a;i<b;i++){const v=L.map(r=>r.it[i]||0),pos=v.filter(x=>x>0).length;h+=`<tr><td class="c">${i+1}</td><td>${esc(Q.audit[i][1])}</td><td class="n">${nf(pos)} (${pc(pos,n)})</td><td class="n">${f2(STAT.mean(v))}</td><td class="n">${f2(n>1?STAT.sd(v):0)}</td></tr>`;}
+    const d=L.map(r=>r[k]);h+=`<tr><td></td><td><b>รวม${nm.replace(/\s*\(.*\)/,'')}</b></td><td></td><td class="n"><b>${f2(STAT.mean(d))}</b></td><td class="n"><b>${f2(n>1?STAT.sd(d):0)}</b></td></tr>`;});
+  h+='</tbody></table></div><div class="note">ข้อที่ข้าม (ตอบข้อ 1 ว่าไม่เคยดื่ม) คิดเป็น 0 คะแนน</div>';
+  // 4 เปรียบเทียบคะแนนตามเพศ / อายุ
+  const sx=[1,2].map(k=>L.filter(r=>r.sex===k).map(r=>r.sc)), w=sx.every(a=>a.length>1)?STAT.welch(sx[0],sx[1]):null;
+  const ags=[0,1,2,3].map(k=>L.filter(r=>ag(r.age)===k).map(r=>r.sc)).filter(a=>a.length>1), av=ags.length>2?STAT.anova(ags):null;
+  const ages=L.map(r=>r.age).filter(Boolean), pr=ages.length>2?STAT.pearson(L.filter(r=>r.age).map(r=>r.age),L.filter(r=>r.age).map(r=>r.sc)):null;
+  h+=cap('เปรียบเทียบคะแนน AUDIT จำแนกตามเพศและอายุ');
+  h+=`<div class="tw"><table><thead><tr><th>การทดสอบ</th><th>ผล</th></tr></thead><tbody>
+    <tr><td>เพศชาย vs หญิง (Independent t-test, Welch)</td><td>${w?`ชาย x̄ = ${f2(STAT.mean(sx[0]))}, หญิง x̄ = ${f2(STAT.mean(sx[1]))} · t = ${f2(w.stat)}, df = ${f2(w.df)}, p <span class="${w.p<.05?'sig':''}">${pf(w.p)}</span>`:'ข้อมูลไม่พอ'}</td></tr>
+    <tr><td>กลุ่มอายุ (One-way ANOVA)</td><td>${av?`F = ${f2(av.stat)}, df = (${av.df[0]}, ${av.df[1]}), p <span class="${av.p<.05?'sig':''}">${pf(av.p)}</span>`:'ข้อมูลไม่พอ'}</td></tr>
+    <tr><td>อายุ กับ คะแนน AUDIT (Pearson’s r)</td><td>${pr?`r = ${f2(pr.r)}, n = ${nf(pr.n)}, p <span class="${pr.p<.05?'sig':''}">${pf(pr.p)}</span>`:'ข้อมูลไม่พอ'}</td></tr></tbody></table></div>`;
+  h+='</div>'; $('ana').innerHTML=h;
+}
+$('anaCopy').onclick=()=>{const r=document.createRange();r.selectNodeContents($('ana'));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);try{document.execCommand('copy');toast('คัดลอกแล้ว วางใน Word ได้เลย')}catch(e){}sel.removeAllRanges();};
 
 // ----- บันทึกการดูแล -----
 $('tbody').addEventListener('click',e=>{const b=e.target.closest('[data-pid]');if(!b)return;
